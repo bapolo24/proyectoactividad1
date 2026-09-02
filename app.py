@@ -1,238 +1,279 @@
-# ============================================================
-# GUÍA DE LECTURA DEL SCRIPT
-# ============================================================
-# Python / Streamlit = recibe datos y realiza cálculos.
-# HTML = define qué elementos existen en pantalla.
-# CSS = define cómo se ven esos elementos.
-# JavaScript = define qué sucede cuando el usuario interactúa.
-#
-# Los comentarios están escritos en términos simples para que
-# el archivo pueda utilizarse directamente durante la clase.
-# ============================================================
-
-# Streamlit crea controles, organiza la pantalla y ejecuta los cálculos.
 import streamlit as st
-# components permite incluir una zona con HTML/CSS/JavaScript.
-import streamlit.components.v1 as components
-# dedent elimina sangría del HTML para que Streamlit lo renderice correctamente.
-from textwrap import dedent
+import sys
+import os
 
-st.set_page_config(page_title="Oil & Gas Production Dashboard", page_icon="🛢️", layout="wide")
+# 1. CONFIGURACIÓN INICIAL
+st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
 
-# Color del fondo general.
-FONDO = "#12304A"
-# Color usado en las tarjetas.
-SUPERFICIE = "#1B476B"
-# Color neón usado para destacar información.
-ACENTO = "#20E6C7"
-# Color principal del texto.
-TEXTO = "#F7FBFF"
+# 2. MANEJO DE RUTAS
+BASE_DIR = os.path.dirname(__file__)
+sys.path.append(os.path.join(BASE_DIR, "modulos"))
+sys.path.append(os.path.join(BASE_DIR, "motor"))
 
-st.markdown(dedent(f"""
-<style>
-/* ==========================================================
-   GUÍA RÁPIDA DE CSS
-   ==========================================================
-   selector        = indica qué elemento queremos modificar.
-   background      = cambia el fondo.
-   color           = cambia el color del texto.
-   border          = crea un borde.
-   border-radius   = redondea las esquinas.
-   overflow:hidden = recorta lo que sobresale de la tarjeta.
-   clip-path       = fuerza la forma curva del contorno.
-   padding         = espacio DENTRO del elemento.
-   margin          = espacio FUERA del elemento.
-   box-shadow      = crea una sombra o brillo.
-   transition      = hace suave un cambio visual.
-   transform       = mueve, gira o escala un elemento.
-   :hover          = estilo usado cuando el cursor está encima.
-   ========================================================== */
+# 3. IMPORTACIONES DE MÓDULOS INTERNOS
+try:
+    from manual_simulador import mostrar_manual
+except ModuleNotFoundError:
+    mostrar_manual = None
 
-.stApp{{background:{FONDO};color:{TEXTO};}}
-h1,h2,h3,p,label,small{{color:{TEXTO} !important;}}
-.hero{{
-    border:2px solid rgba(32,230,199,.58);
-    border-radius:32px !important; overflow:hidden !important; clip-path: inset(0 round 32px);
-    padding:28px; background:{SUPERFICIE}; box-shadow:0 18px 42px rgba(4,18,29,.22); margin-bottom:22px;
-}}
-.accent{{color:{ACENTO};font-weight:800;}}
-.oil-card{{
-    position:relative; border:2px solid rgba(32,230,199,.58);
-    border-radius:32px !important; overflow:hidden !important; clip-path: inset(0 round 32px);
-    padding:26px; background:{SUPERFICIE}; box-shadow:0 16px 38px rgba(4,18,29,.24);
-    transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease;
-}}
-.oil-card::before{{
-    content:""; position:absolute; inset:0; border-radius:32px;
-    background:linear-gradient(135deg, rgba(32,230,199,.05), rgba(255,255,255,.01));
-    pointer-events:none;
-}}
-.oil-card:hover{{transform:translateY(-4px); border-color:{ACENTO}; box-shadow:0 20px 48px rgba(32,230,199,.18);}}
-.value{{color:{ACENTO};font-size:1.22rem;font-weight:800;}}
-div.stButton > button{{
-    width:100%; background:#20557E; color:{ACENTO}; border:2px solid {ACENTO};
-    border-radius:18px !important; padding:.82rem 1rem; font-weight:800;
-    transition:transform .2s ease, box-shadow .2s ease;
-}}
-div.stButton > button:hover{{transform:translateY(-2px); box-shadow:0 0 28px rgba(32,230,199,.34); color:{TEXTO};}}
-div[data-testid="stMetric"]{{
-    border:2px solid rgba(32,230,199,.42); border-radius:24px !important;
-    overflow:hidden !important; clip-path: inset(0 round 24px); background:{SUPERFICIE}; padding:16px;
-}}
-</style>
-"""), unsafe_allow_html=True)
+try:
+    from modulos.nube import leer_estado_actual, enviar_falla, resetear_planta, conectar_db
+except Exception as e:
+    leer_estado_actual = None
+    enviar_falla = None
+    resetear_planta = None
 
-st.markdown(dedent("""
+# MÓDULO DE FÓRMULAS
+try:
+    from modulos.formulas_produccion import formulas_produccion
+except ModuleNotFoundError:
+    formulas_produccion = None
 
-<!-- ========================================================
-     GUÍA RÁPIDA DE HTML
-     div   = caja o contenedor.
-     h1    = título principal.
-     h2/h3 = subtítulos.
-     p     = párrafo.
-     span  = permite aplicar estilo solo a una parte del texto.
-     class = conecta un elemento HTML con una regla CSS.
-     ======================================================== -->
-<div class="hero">
-    <h1>Oil & Gas Production Dashboard</h1>
-    <p>
-        Aplicación educativa para analizar
-        <span class="accent">producción</span>,
-        <span class="accent">Water Cut</span>
-        e
-        <span class="accent">ingreso bruto mensual estimado</span>
-        de un pozo.
-    </p>
-</div>
-"""), unsafe_allow_html=True)
+# MOTOR DE SIMULACIÓN
+MotorSimulacion = None
+try:
+    from motor_simulacion import MotorSimulacion
+except ModuleNotFoundError:
+    try:
+        from modulos.motor_simulacion import MotorSimulacion
+    except ModuleNotFoundError:
+        st.error("⚠️ No se encontró 'motor_simulacion.py'. Verificá las rutas en tu repositorio.")
 
-# columns divide la interfaz en dos zonas: parámetros e interacción.
-left, right = st.columns([1.05, 0.95], gap="large")
+# 4. INICIALIZACIÓN DEL ESTADO DE SESIÓN
+if 'ingresado' not in st.session_state: 
+    st.session_state.ingresado = False
+if 'rol' not in st.session_state: 
+    st.session_state.rol = "alumno"
+if 'area_actual' not in st.session_state: 
+    st.session_state.area_actual = "🏠 Dashboard"
 
-# Todo lo indentado aquí aparece en la columna izquierda.
-with left:
-    st.subheader("1. Parámetros operacionales")
-    oil_bopd = st.slider("Producción de petróleo [BOPD]", 100, 5000, 1200, 50)
-    water_bwpd = st.slider("Producción de agua [BWPD]", 0, 5000, 600, 50)
-    oil_price = st.number_input("Precio estimado [USD/bbl]", 1.0, 200.0, 75.0, 1.0)
+if 'motor' not in st.session_state and MotorSimulacion is not None:
+    st.session_state.motor = MotorSimulacion()
 
-    st.markdown(dedent(f"""
-    <div class="oil-card">
-        <h3>Parámetros activos</h3>
-        <p>Petróleo: <span class="value">{oil_bopd:,} BOPD</span></p>
-        <p>Agua: <span class="value">{water_bwpd:,} BWPD</span></p>
-        <p>Precio: <span class="value">${oil_price:.2f}/bbl</span></p>
-        <p><small>Esta tarjeta reacciona con hover por CSS.</small></p>
-    </div>
-    """), unsafe_allow_html=True)
-
-    # El botón devuelve True cuando se presiona y permite ejecutar los cálculos.
-    calcular = st.button("Calcular indicadores", type="primary")
-
-# Todo lo indentado aquí aparece en la columna derecha.
-with right:
-    st.subheader("2. Interacción JavaScript")
-    components.html("""
+# --- FUNCIONES DE ACCESO Y SEGURIDAD ---
+def login():
+    st.markdown("""
     <style>
-    html,body{margin:0;padding:10px;background:transparent;font-family:Arial,sans-serif;}
-    .shell{
-        position:relative; padding:4px; border-radius:36px; overflow:hidden;
-        clip-path: inset(0 round 36px); background:#12304A; box-shadow:0 18px 46px rgba(4,18,29,.30);
-    }
-    .shell::before{
-        content:""; position:absolute; width:180%; height:180%; left:-40%; top:-40%;
-        background: conic-gradient(from 0deg, transparent 0deg 220deg, #20E6C7 275deg, #F7FBFF 320deg, transparent 360deg);
-        opacity:0; transition:opacity .22s ease;
-    }
-    .shell.active::before{opacity:1; animation:spin 1.5s linear infinite;}
-    .card{
-        --x:50%; --y:50%; position:relative; z-index:1; min-height:255px;
-        border-radius:32px; overflow:hidden; clip-path: inset(0 round 32px); padding:30px;
-        background: radial-gradient(circle at var(--x) var(--y), rgba(32,230,199,.28), rgba(27,71,107,0) 36%), #1B476B;
-        color:#F7FBFF;
-    }
-    .card h2{margin-top:0;color:#20E6C7;}
-    .card strong{color:#20E6C7;}
-    .status{margin-top:20px;padding-top:14px;border-top:1px solid rgba(32,230,199,.40);}
-    @keyframes spin{to{transform:rotate(360deg);}}
+    .stApp { background-color: #0e1117; }
+    .contenedor-login { position: relative; width: 100%; max-width: 500px; margin: auto; }
+    .stTextInput input { background-color: rgba(0,0,0,0) !important; color: white !important; border: none !important; font-size: 16px !important; height: 42px !important; }
+    div[data-key="u_pizzolato"] { position: absolute; top: 435px; left: 65px; width: 310px; z-index: 10; }
+    div[data-key="p_pizzolato"] { position: absolute; top: 490px; left: 65px; width: 310px; z-index: 10; }
+    div[data-key="btn_pizzolato"] { position: absolute; top: 550px; left: 65px; width: 310px; z-index: 10; }
+    label { display: none !important; }
+    div[data-key="btn_pizzolato"] button { background: transparent !important; border: none !important; color: transparent !important; height: 45px !important; }
     </style>
+    """, unsafe_allow_html=True)
 
-    <div id="shell" class="shell">
-        <div id="card" class="card">
-            <h2>Pozo A-17</h2>
-            <p>Producción: <strong>1,250 BOPD</strong></p>
-            <p>Water Cut: <strong>31.4%</strong></p>
-            <p>El borde neón y el halo responden al movimiento del cursor.</p>
-            <p id="status" class="status">Estado: cursor fuera</p>
-        </div>
-    </div>
+    st.markdown('<div class="contenedor-login">', unsafe_allow_html=True)
+    if os.path.exists("assets/login_menfa.png"):
+        st.image("assets/login_menfa.png", use_container_width=True)
+    else:
+        st.info("📌 IPCL MENFA - Control de Acceso")
 
-    <script>
-    // Buscamos los tres elementos HTML que JavaScript necesita controlar.
-    const shell = document.getElementById("shell");   // contenedor del borde neón
-    const card = document.getElementById("card");     // tarjeta interior
-    const status = document.getElementById("status"); // texto de estado
+    u = st.text_input("U", key="u_pizzolato")
+    p = st.text_input("P", type="password", key="p_pizzolato")
+    
+    if st.button("INGRESAR", key="btn_pizzolato", use_container_width=True):
+        if u == "admin" and p == "menfa2026":
+            st.session_state.ingresado = True
+            st.session_state.rol = "instructor"
+            st.rerun()
+        elif u == "alumno" and p == "alumno2026":
+            st.session_state.ingresado = True
+            st.session_state.rol = "alumno"
+            st.rerun()
+        else:
+            st.error("Credenciales incorrectas")
 
-    // mouseenter = el cursor entra al contenedor.
-    shell.addEventListener("mouseenter", () => {
-        // Agregamos active: CSS detecta esta clase y enciende el giro neón.
-        shell.classList.add("active");
-        // Cambiamos el mensaje que ve el usuario.
-        status.textContent = "Estado: interacción activa";
-    });
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    // mouseleave = el cursor sale del contenedor.
-    shell.addEventListener("mouseleave", () => {
-        // Quitamos active: la animación se detiene.
-        shell.classList.remove("active");
-        // Restauramos el mensaje.
-        status.textContent = "Estado: cursor fuera";
-        // Centramos nuevamente el halo.
-        card.style.setProperty("--x", "50%");
-        card.style.setProperty("--y", "50%");
-    });
+def verificar_emergencias_remotas():
+    if not callable(leer_estado_actual):
+        return
+    try:
+        estado = leer_estado_actual()
+        if estado and estado.get("activo"):
+            st.markdown("<style>.stApp {background-color: #3e0000 !important;}</style>", unsafe_allow_html=True)
+            st.error("🚨 EMG_LNZ OPR")
+            st.header(estado.get('falla', 'Emergencia Remota'))
+            st.warning(estado.get('descripcion', 'Atención requerida'))
+            
+            if 'motor' in st.session_state and hasattr(st.session_state.motor, 'simular_golpe_de_gas'):
+                st.session_state.motor.simular_golpe_de_gas()
+                
+            respuesta = st.text_area("Procedimiento de Maniobra:")
+            if st.button("Enviar Respuesta"):
+                st.success("Respuesta enviada. Esperando normalización.")
+            st.stop() 
+    except Exception as e:
+        st.sidebar.caption(f"Status Nube: Desconectado ({e})")
 
-    // mousemove = el cursor se mueve dentro de la tarjeta.
-    card.addEventListener("mousemove", (event) => {
-        // Obtiene posición y dimensiones de la tarjeta.
-        const rect = card.getBoundingClientRect();
-        // Calculamos X e Y del cursor como porcentaje.
-        const x = ((event.clientX - rect.left) / rect.width) * 100;
-        const y = ((event.clientY - rect.top) / rect.height) * 100;
-        // Enviamos X/Y a las variables CSS --x y --y.
-        card.style.setProperty("--x", x + "%");
-        card.style.setProperty("--y", y + "%");
-        // El radial-gradient usa esas variables y por eso la luz sigue al cursor.
-    });
-    </script>
-    """, height=355)
+# --- PANEL DEL INSTRUCTOR ---
+def modulo_instructor_pizzolato():
+    st.title("👨‍🏫 Comando Maestro - Menfa 3.0")
+    col1, col2 = st.columns(2)
+    with col1:
+        falla = st.selectbox("Inyectar Falla:", ["Fuga de H2S", "Cavitación", "BSW Alto", "ESD Activada"])
+        detalles = st.text_area("Descripción del síntoma:")
+        if st.button("🔴 LANZAR EMERGENCIA"):
+            if callable(enviar_falla):
+                enviar_falla(falla, detalles)
+            if 'motor' in st.session_state:
+                if falla == "ESD Activada" and hasattr(st.session_state.motor, 'activar_esd'):
+                    st.session_state.motor.activar_esd()
+                elif hasattr(st.session_state.motor, 'simular_golpe_de_gas'):
+                    st.session_state.motor.simular_golpe_de_gas()
+            st.toast("Falla enviada e inyectada en el motor")
+    with col2:
+        if st.button("🟢 NORMALIZAR PLANTA"):
+            if callable(resetear_planta):
+                resetear_planta()
+            if 'motor' in st.session_state and hasattr(st.session_state.motor, 'reset_planta'):
+                st.session_state.motor.reset_planta()
+            st.success("Planta reseteada en entorno local y nube")
 
-# Este bloque solo se ejecuta después de presionar el botón.
-if calcular:
-    # Fluido total = petróleo + agua.
-    total_fluid = oil_bopd + water_bwpd
-    # Water Cut = porcentaje de agua dentro del fluido total.
-    water_cut = water_bwpd / total_fluid * 100 if total_fluid else 0
-    # Estimamos petróleo mensual usando 30 días.
-    monthly_oil = oil_bopd * 30
-    # Ingreso bruto = barriles mensuales x precio.
-    gross_revenue = monthly_oil * oil_price
+# --- APP PRINCIPAL ---
+def main_app():
+    if st.session_state.rol == "alumno":
+        verificar_emergencias_remotas()
 
-    st.subheader("3. Resultado operacional")
-    # Cuatro columnas para mostrar los KPI.
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Petróleo", f"{oil_bopd:,.0f} BOPD")
-    c2.metric("Fluido total", f"{total_fluid:,.0f} BFPD")
-    c3.metric("Water Cut", f"{water_cut:.1f}%")
-    c4.metric("Ingreso mensual", f"${gross_revenue:,.0f}")
+    opciones_menu = [
+        "🏠 Dashboard", 
+        "🛢️ Operaciones de Campo",
+        "🗺️ Mapa del Campo", 
+        "📊 Campo Petrolero",
+        "🏭 Planta de Proceso",
+        "🔬 Laboratorio de Crudo",
+        "📦 Equipos de Planta",
+        "📈 Ingeniería",
+        "⚙️ Ingeniería de Producción",
+        "🧮 Fórmulas de Producción Petrolera",
+        "🖥️ Monitoreo SCADA",
+        "📋 Gestión y Reportes",
+        "🛠️ Mantenimiento e Integridad",
+        "🧠 Evaluación",
+        "🎯 Entrenamiento Operativo",
+        "📘 Manual"
+    ]
 
-    st.markdown(dedent(f"""
-    <div class="oil-card">
-        <h3>Lectura rápida</h3>
-        <p>El pozo produce <span class="value">{oil_bopd:,.0f} BOPD</span> de petróleo.</p>
-        <p>El Water Cut estimado es <span class="value">{water_cut:.1f}%</span>.</p>
-        <p>Con un precio de <span class="value">${oil_price:.2f}/bbl</span>, el ingreso bruto mensual estimado es <span class="value">${gross_revenue:,.0f}</span>.</p>
-    </div>
-    """), unsafe_allow_html=True)
+    with st.sidebar:
+        if os.path.exists("assets/logo_menfa.png"):
+            st.image("assets/logo_menfa.png")
+        else:
+            st.write("### IPCL MENFA")
+        
+        st.write(f"👤 **Rol:** {st.session_state.rol.upper()}")
+        
+        try:
+            idx = opciones_menu.index(st.session_state.area_actual)
+        except ValueError:
+            idx = 0
 
-st.caption("Ejemplo educativo: no incluye regalías, impuestos, OPEX, transporte ni descuentos comerciales.")
+        area = st.radio("Navegación:", opciones_menu, index=idx)
+        
+        if area != st.session_state.area_actual:
+            st.session_state.area_actual = area
+            st.rerun()
+        
+        if st.button("🚪 Salir"):
+            st.session_state.clear()
+            st.rerun()
+
+    # --- ACTUALIZACIÓN DE FÍSICAS EN BACKGROUND ---
+    if 'motor' in st.session_state:
+        motor = st.session_state.motor
+        if hasattr(motor, 'actualizar_ciclo'):
+            motor.actualizar_ciclo()
+        elif hasattr(motor, 'obtain_datos'):
+            motor.obtain_datos()
+        elif hasattr(motor, 'obtener_datos'):
+            motor.obtener_datos()
+
+    # --- MOTOR DE ENRUTAMIENTO SEGURO ---
+    actual = st.session_state.area_actual
+
+    try:
+        if actual == "🏠 Dashboard":
+            from modulos.dashboard_principal import dashboard_principal
+            dashboard_principal()
+        elif actual == "🛢️ Operaciones de Campo":
+            from modulos.pozo_productor import pozo_productor
+            pozo_productor()
+        elif actual == "🗺️ Mapa del Campo":
+            from modulos.mapa_campo import mostrar_mapa
+            mostrar_mapa()
+        elif actual == "📊 Campo Petrolero":
+            from modulos.campo_petrolero import mostrar_estadisticas
+            mostrar_estadisticas()
+        elif actual == "🏭 Planta de Proceso":
+            from modulos.planta_produccion import planta_produccion
+            planta_produccion()
+        elif actual == "🔬 Laboratorio de Crudo":
+            from modulos.laboratorio import mostrar_laboratorio_crudo
+            if 'motor' in st.session_state:
+                bsw_val = getattr(st.session_state.motor, 'bsw', 0.4)
+                rvp_val = getattr(st.session_state.motor, 'rvp', 65.0)
+                q_val = getattr(st.session_state.motor, 'caudal_base', 450.0)
+                mostrar_laboratorio_crudo(bsw_motor=bsw_val, rvp_motor=rvp_val, caudal_motor=q_val)
+            else:
+                mostrar_laboratorio_crudo()    
+        elif actual == "📦 Equipos de Planta":
+            from modulos.equipos_planta import mostrar_equipos_planta
+            # Extraemos valores dinámicos del motor si están disponibles
+            if 'motor' in st.session_state:
+                q_act = getattr(st.session_state.motor, 'caudal_base', 450.0)
+                bsw_act = getattr(st.session_state.motor, 'bsw', 1.0)
+                mostrar_equipos_planta(q_pozo=q_act, bsw_pozo=bsw_act)
+            else:
+                mostrar_equipos_planta()
+        elif actual == "📈 Ingeniería":
+            from modulos.ingenieria import mostrar_ingenieria
+            mostrar_ingenieria()
+        elif actual == "⚙️ Ingeniería de Producción":
+            from modulos.ingenieria_produccion import mostrar_ingenieria_produccion
+            mostrar_ingenieria_produccion()    
+        elif actual == "🧮 Fórmulas de Producción Petrolera":
+            if formulas_produccion:
+                formulas_produccion()
+            else:
+                st.warning("⚠️ Módulo de fórmulas no disponible.")
+        elif actual == "🖥️ Monitoreo SCADA":
+            from modulos.scada import show
+            show()
+        elif actual == "📋 Gestión y Reportes":
+            from modulos.gestion_supervisor_prod import gestion_supervisor_prod
+            gestion_supervisor_prod()
+        elif actual == "🛠️ Mantenimiento e Integridad":
+            from modulos.mantenimiento_integridad import mostrar_mantenimiento_integridad
+            mostrar_mantenimiento_integridad()
+        elif actual == "🧠 Evaluación":
+            from modulos.evaluacion import evaluacion
+            evaluacion()
+        elif actual == "🎯 Entrenamiento Operativo":
+            from modulos.entrenamiento import mostrar_entrenamiento
+            mostrar_entrenamiento()
+        elif actual == "📘 Manual":
+            if mostrar_manual:
+                mostrar_manual()
+            else:
+                st.warning("La función 'mostrar_manual' no se pudo ejecutar porque falló la importación inicial.")
+    except Exception as err:
+        st.error(f"❌ Error al cargar el módulo '{actual}': {err}")
+
+# --- EJECUCIÓN ---
+def main():
+    if not st.session_state.ingresado:
+        login()
+    else:
+        if st.session_state.rol == "instructor":
+            modo = st.sidebar.selectbox("Vista:", ["🖥️ Simulador", "🎮 Control Maestro"])
+            if modo == "🎮 Control Maestro": 
+                modulo_instructor_pizzolato()
+            else: 
+                main_app()
+        else:
+            main_app()
+
+if __name__ == "__main__":
+    main()
