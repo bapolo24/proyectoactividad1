@@ -3,7 +3,7 @@ import sys
 import os
 
 # 1. CONFIGURACIÓN INICIAL
-st.set_page_config(page_title="IPCL MENFA - Simulador 3.0", layout="wide")
+st.set_page_config(page_title="TAREA 1", layout="wide")
 
 # 2. MANEJO DE RUTAS
 BASE_DIR = os.path.dirname(__file__)
@@ -111,7 +111,7 @@ def verificar_emergencias_remotas():
 
 # --- PANEL DEL INSTRUCTOR ---
 def modulo_instructor_pizzolato():
-    st.title("👨‍🏫 Comando Maestro - Menfa 3.0")
+    st.title("👨‍🏫 Comando Maestro - TAREA 1")
     col1, col2 = st.columns(2)
     with col1:
         falla = st.selectbox("Inyectar Falla:", ["Fuga de H2S", "Cavitación", "BSW Alto", "ESD Activada"])
@@ -143,18 +143,6 @@ def main_app():
         "🛢️ Operaciones de Campo",
         "🗺️ Mapa del Campo", 
         "📊 Campo Petrolero",
-        "🏭 Planta de Proceso",
-        "🔬 Laboratorio de Crudo",
-        "📦 Equipos de Planta",
-        "📈 Ingeniería",
-        "⚙️ Ingeniería de Producción",
-        "🧮 Fórmulas de Producción Petrolera",
-        "🖥️ Monitoreo SCADA",
-        "📋 Gestión y Reportes",
-        "🛠️ Mantenimiento e Integridad",
-        "🧠 Evaluación",
-        "🎯 Entrenamiento Operativo",
-        "📘 Manual"
     ]
 
     with st.sidebar:
