@@ -7,12 +7,6 @@ import time
 def show():
     st.header("📈 IPR ")
   
-    # 1. Garantizamos la presencia del factor de falla en session_state
-    if 'factor_obstruccion' not in st.session_state:
-        st.session_state.factor_obstruccion = 1.0
-    
-    factor = st.session_state.factor_obstruccion
-
     # --- PARÁMETROS DEL RESERVORIO ---
     with st.sidebar.expander("🛠️ Parámetros del Reservorio", expanded=True):
         p_res = st.number_input("Presión de Reservorio (Pr) [psi]", value=3000, step=100)
