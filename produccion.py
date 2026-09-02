@@ -1,10 +1,36 @@
-import streamlit as st  # Importa Streamlit para usar widgets, navegación y session_state.
-st.title("Calculadora de Grado API")  # Muestra el título principal de la herramienta.
-sg = st.number_input("Gravedad específica", value=st.session_state.get("sg", 0.85))  # Solicita SG utilizando como valor inicial el dato conservado en la sesión.
-st.session_state.sg = sg  # Guarda el valor actual de SG para reutilizarlo en otras páginas.
-if st.button("Calcular"):  # Comprueba si el usuario solicitó realizar el cálculo.
-    api = (141.5 / sg) - 131.5  # Calcula el grado API con la ecuación estándar.
-    st.session_state.api = api  # Guarda también el resultado API dentro de session_state.
-    st.metric("Resultado", f"{api:.2f} °API")  # Presenta el resultado en un widget métrico.
-if st.button("Ir al resumen"):  # Comprueba si el usuario desea continuar hacia la siguiente página.
-    st.switch_page("resumen.py")  # Cambia programáticamente hacia la página de resumen.
+import streamlit as st
+import pandas as pd
+import numpy as np
+import plotly.graph_objects as go
+import time
+
+def show():
+    st.header("📈 IPR ")
+  
+    # 1. Garantizamos la presencia del factor de falla en session_state
+    if 'factor_obstruccion' not in st.session_state:
+        st.session_state.factor_obstruccion = 1.0
+    
+    factor = st.session_state.factor_obstruccion
+
+    # --- PARÁMETROS DEL RESERVORIO ---
+    with st.sidebar.expander("🛠️ Parámetros del Reservorio", expanded=True):
+        p_res = st.number_input("Presión de Reservorio (Pr) [psi]", value=3000, step=100)
+        ip = st.number_input("Índice de Productividad (IP) [bpd/psi]", value=1.5, step=0.1)
+        p_bur = st.number_input("Presión de burbuja (Pbur) [psi]", value=500, step=10)
+        p_wf = st.number_input("Presión de fondo fluyente (Pwf) [psi]", value=500, step=10)
+        
+    # --- CÁLCULO DE IPR (OFERTA) ---
+    caudal_max = ip * p_res
+    # Generamos un vector denso para mayor precisión en la intersección
+    caudales = np.linspace(0.1, caudal_max if caudal_max > 0 else 100.0, 200) 
+    pwf = p_res - (caudales / ip)
+    pwf = np.maximum(pwf, 0.0)
+      # --- GRÁFICO INTERACTIVO PLOTLY ---
+    fig = go.Figure()
+    
+    # Curva IPR
+    fig.add_trace(go.Scatter(
+        x=caudales, y=pwf, 
+        name="IPR (Oferta Yacimiento)",
+        line=dict(color='#00FF90', width=3.5)
