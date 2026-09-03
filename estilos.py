@@ -5,231 +5,463 @@ def cargar_estilos():
 
     st.markdown(
         """
-        <style>
+<style>
 
-        /* =====================================================
-           FONDO GENERAL
-        ===================================================== */
-
-        .stApp {
-            background:
-                linear-gradient(
-                    135deg,
-                    #07111f 0%,
-                    #0b1f33 50%,
-                    #102a43 100%
-                );
-        }
+/* =========================================================
+   FONDO GENERAL DE LA APLICACIÓN
+========================================================= */
 
+.stApp {
+    background: linear-gradient(
+        135deg,
+        #E5E7EB 0%,
+        #D1D5DB 50%,
+        #CBD5E1 100%
+    );
+}
 
-        /* =====================================================
-           TEXTO GENERAL
-        ===================================================== */
 
-        html, body, [class*="css"] {
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-        }
+/* =========================================================
+   CONTENIDO PRINCIPAL
+========================================================= */
 
+[data-testid="stMainBlockContainer"] {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
 
-        /* =====================================================
-           TÍTULOS
-        ===================================================== */
 
-        h1 {
-            color: #ffffff;
-            font-weight: 700;
-        }
+/* =========================================================
+   TEXTO GENERAL
+========================================================= */
 
-        h2 {
-            color: #e6edf5;
-            font-weight: 650;
-        }
+html,
+body,
+p,
+span,
+label,
+div {
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        h3 {
-            color: #e6edf5;
-        }
 
+/* =========================================================
+   TÍTULOS
+========================================================= */
 
-        /* =====================================================
-           TARJETAS PERSONALIZADAS
-        ===================================================== */
+h1 {
+    color: #1F2937 !important;
+    font-weight: 750 !important;
+}
 
-        .oil-card {
+h2 {
+    color: #263238 !important;
+    font-weight: 700 !important;
+}
 
-            background:
-                linear-gradient(
-                    145deg,
-                    #102a43,
-                    #163a59
-                );
+h3 {
+    color: #374151 !important;
+    font-weight: 650 !important;
+}
 
-            border:
-                1px solid rgba(
-                    255,
-                    255,
-                    255,
-                    0.12
-                );
 
-            border-radius: 16px;
+/* =========================================================
+   TEXTO NORMAL STREAMLIT
+========================================================= */
 
-            padding: 22px;
+[data-testid="stMarkdownContainer"] p {
+    color: #374151;
+}
 
-            margin-top: 8px;
 
-            margin-bottom: 12px;
+/* =========================================================
+   LABELS DE NUMBER INPUT
+========================================================= */
 
-            text-align: center;
+[data-testid="stWidgetLabel"] p {
+    color: #1F2937 !important;
+    font-weight: 600 !important;
+}
 
-            box-shadow:
-                0px 6px 18px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    0.30
-                );
 
-            transition:
-                transform 0.25s ease,
-                box-shadow 0.25s ease;
-        }
+/* =========================================================
+   CAMPOS NUMBER INPUT
+========================================================= */
 
+[data-testid="stNumberInput"] input {
 
-        .oil-card:hover {
+    background-color: #F8FAFC !important;
 
-            transform:
-                translateY(-4px);
+    color: #111827 !important;
 
-            box-shadow:
-                0px 10px 28px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    0.40
-                );
-        }
+    border:
+        1px solid #9CA3AF !important;
 
+    border-radius: 8px !important;
+}
 
-        .oil-card-icon {
 
-            font-size: 32px;
+/* =========================================================
+   EXPANDERS
+========================================================= */
 
-            margin-bottom: 5px;
-        }
+[data-testid="stExpander"] {
 
+    background-color: #F3F4F6;
 
-        .oil-card-title {
+    border:
+        1px solid #9CA3AF;
 
-            color: #b9c8d8;
+    border-radius: 12px;
 
-            font-size: 15px;
+    margin-bottom: 15px;
 
-            font-weight: 600;
+    box-shadow:
+        0 3px 8px
+        rgba(0, 0, 0, 0.10);
+}
 
-            margin-bottom: 6px;
-        }
 
+[data-testid="stExpander"] summary {
 
-        .oil-card-value {
+    color: #1F2937 !important;
 
-            color: #ffffff;
+    font-weight: 650 !important;
+}
 
-            font-size: 28px;
 
-            font-weight: 750;
+/* =========================================================
+   TARJETAS DE RESULTADOS
+========================================================= */
 
-            margin-bottom: 4px;
-        }
+.oil-card {
 
+    background:
+        linear-gradient(
+            145deg,
+            #4B5563,
+            #374151
+        );
 
-        .oil-card-unit {
+    border:
+        1px solid #6B7280;
 
-            color: #f4b942;
+    border-radius: 16px;
 
-            font-size: 14px;
+    padding: 22px 18px;
 
-            font-weight: 500;
-        }
+    margin:
+        8px 0px 14px 0px;
 
+    text-align: center;
 
-        /* =====================================================
-           BLOQUE TÉCNICO
-        ===================================================== */
+    min-height: 165px;
 
-        .technical-info {
+    display: flex;
 
-            background:
-                rgba(
-                    15,
-                    42,
-                    67,
-                    0.90
-                );
+    flex-direction: column;
 
-            border-left:
-                5px solid #f4b942;
+    justify-content: center;
 
-            padding: 18px;
+    box-shadow:
+        0px 6px 15px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
 
-            border-radius: 10px;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
 
-            margin-top: 15px;
 
-            margin-bottom: 20px;
+.oil-card:hover {
 
-            color: #e9f1f7;
+    transform:
+        translateY(-4px);
 
-            box-shadow:
-                0px 4px 12px
-                rgba(
-                    0,
-                    0,
-                    0,
-                    0.20
-                );
-        }
+    box-shadow:
+        0px 10px 24px
+        rgba(
+            0,
+            0,
+            0,
+            0.26
+        );
+}
 
 
-        /* =====================================================
-           TABS
-        ===================================================== */
+/* =========================================================
+   ÍCONO DE LA TARJETA
+========================================================= */
 
-        button[data-baseweb="tab"] {
+.oil-card-icon {
 
-            font-weight: 600;
+    font-size: 31px;
 
-            font-size: 16px;
-        }
+    margin-bottom: 8px;
+}
 
 
-        /* =====================================================
-           BOTONES
-        ===================================================== */
+/* =========================================================
+   TÍTULO DE LA TARJETA
+========================================================= */
 
-        div.stButton > button {
+.oil-card-title {
 
-            border-radius: 10px;
+    color: #E5E7EB;
 
-            font-weight: bold;
-        }
+    font-size: 15px;
 
+    font-weight: 600;
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
+    margin-bottom: 8px;
+}
 
-        section[data-testid="stSidebar"] {
 
-            background-color: #071522;
-        }
+/* =========================================================
+   VALOR PRINCIPAL
+========================================================= */
 
-        </style>
+.oil-card-value {
+
+    color: #FFFFFF;
+
+    font-size: 29px;
+
+    font-weight: 750;
+
+    margin-bottom: 6px;
+}
+
+
+/* =========================================================
+   UNIDAD
+========================================================= */
+
+.oil-card-unit {
+
+    color: #FBBF24;
+
+    font-size: 14px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   BLOQUE INFORMATIVO
+========================================================= */
+
+.technical-info {
+
+    background:
+        #F3F4F6;
+
+    color:
+        #1F2937;
+
+    border-left:
+        5px solid #4B5563;
+
+    padding:
+        18px 20px;
+
+    border-radius:
+        10px;
+
+    margin:
+        15px 0px 22px 0px;
+
+    box-shadow:
+        0px 4px 10px
+        rgba(
+            0,
+            0,
+            0,
+            0.10
+        );
+}
+
+
+/* =========================================================
+   TARJETAS HOME
+========================================================= */
+
+.home-card {
+
+    background:
+        linear-gradient(
+            145deg,
+            #F9FAFB,
+            #E5E7EB
+        );
+
+    border:
+        1px solid #9CA3AF;
+
+    border-radius:
+        15px;
+
+    padding:
+        24px;
+
+    min-height:
+        220px;
+
+    text-align:
+        center;
+
+    box-shadow:
+        0px 5px 14px
+        rgba(
+            0,
+            0,
+            0,
+            0.12
+        );
+
+    transition:
+        0.25s ease;
+}
+
+
+.home-card:hover {
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0px 10px 22px
+        rgba(
+            0,
+            0,
+            0,
+            0.18
+        );
+}
+
+
+.home-card-icon {
+
+    font-size:
+        40px;
+
+    margin-bottom:
+        10px;
+}
+
+
+.home-card-title {
+
+    color:
+        #1F2937;
+
+    font-size:
+        20px;
+
+    font-weight:
+        750;
+
+    margin-bottom:
+        10px;
+}
+
+
+.home-card-text {
+
+    color:
+        #4B5563;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.5;
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+button[data-baseweb="tab"] {
+
+    color:
+        #374151 !important;
+
+    font-size:
+        16px;
+
+    font-weight:
+        650;
+}
+
+
+button[data-baseweb="tab"][aria-selected="true"] {
+
+    color:
+        #111827 !important;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+section[data-testid="stSidebar"] {
+
+    background:
+        #D1D5DB;
+}
+
+
+section[data-testid="stSidebar"] * {
+
+    color:
+        #1F2937;
+}
+
+
+/* =========================================================
+   DATAFRAME
+========================================================= */
+
+[data-testid="stDataFrame"] {
+
+    border-radius:
+        10px;
+
+    overflow:
+        hidden;
+}
+
+
+/* =========================================================
+   CAPTION
+========================================================= */
+
+[data-testid="stCaptionContainer"] {
+
+    color:
+        #4B5563 !important;
+}
+
+
+/* =========================================================
+   INFO / SUCCESS / WARNING / ERROR
+========================================================= */
+
+[data-testid="stAlert"] {
+
+    border-radius:
+        10px;
+}
+
+</style>
         """,
-
         unsafe_allow_html=True
     )
