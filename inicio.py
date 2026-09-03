@@ -1,5 +1,4 @@
 import streamlit as st
-import textwrap
 
 from estilos import cargar_estilos
 from componentes import bloque_informativo
@@ -17,44 +16,22 @@ cargar_estilos()
 # ENCABEZADO PRINCIPAL
 # ==========================================================
 
+st.title(
+    "🛢️ Tarea Evaluativa – Módulo 1"
+)
+
+
 st.markdown(
     """
-    <div style="
-        text-align: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-    ">
-
-        <h1 style="
-            color: #1F2937;
-            margin-bottom: 10px;
-        ">
-            🛢️ Tarea Evaluativa – Módulo 1
-        </h1>
+### Desarrollo de una aplicación web para Oil & Gas con Streamlit, HTML, CSS y JavaScript
+"""
+)
 
 
-        <h3 style="
-            color: #374151;
-            font-weight: 600;
-            margin-bottom: 10px;
-        ">
-            Desarrollo de una aplicación web para Oil & Gas
-            con Streamlit, HTML, CSS y JavaScript
-        </h3>
-
-
-        <p style="
-            color: #4B5563;
-            font-size: 18px;
-            font-weight: bold;
-        ">
-            BOOTCAMP DATA ANALYTICS FOR OIL & GAS
-        </p>
-
-    </div>
-    """,
-
-    unsafe_allow_html=True
+st.markdown(
+    """
+### 🎓 BOOTCAMP DATA ANALYTICS FOR OIL & GAS
+"""
 )
 
 
@@ -62,7 +39,7 @@ st.divider()
 
 
 # ==========================================================
-# DESCRIPCIÓN DEL PROYECTO
+# DESCRIPCIÓN GENERAL
 # ==========================================================
 
 bloque_informativo(
@@ -70,14 +47,13 @@ bloque_informativo(
     "Objetivo del Proyecto",
 
     """
-    Desarrollar una aplicación web interactiva orientada
-    a la Ingeniería de Petróleo, integrando cálculos
-    técnicos de Producción, Perforación y Reservorios
-    mediante Python y Streamlit.
+    Desarrollar una aplicación web interactiva orientada a la
+    Ingeniería de Petróleo, integrando cálculos técnicos de
+    Producción, Perforación y Reservorios mediante Python
+    y Streamlit.
 
-    La aplicación incorpora además elementos personalizados
-    mediante HTML, CSS, JavaScript y visualizaciones
-    interactivas con Plotly.
+    La aplicación incorpora HTML, CSS, JavaScript y
+    visualizaciones interactivas con Plotly.
     """,
 
     "🎯"
@@ -102,41 +78,35 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
 
-    tarjeta_produccion = """
-<div class="home-card">
+    st.html(
+        """
+        <div class="home-card">
 
-    <div class="home-card-icon">
-        🛢️
-    </div>
+            <div class="home-card-icon">
+                🛢️
+            </div>
 
-    <div class="home-card-title">
-        PRODUCCIÓN
-    </div>
+            <div class="home-card-title">
+                PRODUCCIÓN
+            </div>
 
-    <div class="home-card-text">
+            <div class="home-card-text">
+                Análisis del desempeño de afluencia
+                mediante una IPR compuesta.
+            </div>
 
-        Análisis del desempeño de afluencia
-        mediante una IPR compuesta.
+            <div class="home-card-separator"></div>
 
-        <br><br>
+            <div class="home-card-subtitle">
+                Modelo técnico
+            </div>
 
-        <b>Modelo técnico</b>
+            <div class="home-card-model">
+                Región Lineal + Vogel
+            </div>
 
-        <br>
-
-        Región Lineal + Vogel
-
-    </div>
-
-</div>
-"""
-
-    st.markdown(
-        textwrap.dedent(
-            tarjeta_produccion
-        ),
-
-        unsafe_allow_html=True
+        </div>
+        """
     )
 
 
@@ -146,42 +116,35 @@ with col1:
 
 with col2:
 
-    tarjeta_perforacion = """
-<div class="home-card">
+    st.html(
+        """
+        <div class="home-card">
 
-    <div class="home-card-icon">
-        🏗️
-    </div>
+            <div class="home-card-icon">
+                🏗️
+            </div>
 
-    <div class="home-card-title">
-        PERFORACIÓN
-    </div>
+            <div class="home-card-title">
+                PERFORACIÓN
+            </div>
 
-    <div class="home-card-text">
+            <div class="home-card-text">
+                Cálculo del gradiente y presión
+                hidrostática del fluido de perforación.
+            </div>
 
-        Cálculo del gradiente y
-        presión hidrostática del
-        fluido de perforación.
+            <div class="home-card-separator"></div>
 
-        <br><br>
+            <div class="home-card-subtitle">
+                Análisis técnico
+            </div>
 
-        <b>Análisis técnico</b>
+            <div class="home-card-model">
+                Sobrebalance · Balance · Bajo balance
+            </div>
 
-        <br>
-
-        Sobrebalance / Balance / Bajo balance
-
-    </div>
-
-</div>
-"""
-
-    st.markdown(
-        textwrap.dedent(
-            tarjeta_perforacion
-        ),
-
-        unsafe_allow_html=True
+        </div>
+        """
     )
 
 
@@ -191,46 +154,40 @@ with col2:
 
 with col3:
 
-    tarjeta_reservorios = """
-<div class="home-card">
+    st.html(
+        """
+        <div class="home-card">
 
-    <div class="home-card-icon">
-        🪨
-    </div>
+            <div class="home-card-icon">
+                🪨
+            </div>
 
-    <div class="home-card-title">
-        RESERVORIOS
-    </div>
+            <div class="home-card-title">
+                RESERVORIOS
+            </div>
 
-    <div class="home-card-text">
+            <div class="home-card-text">
+                Estimación volumétrica del Petróleo
+                Original en Sitio.
+            </div>
 
-        Estimación volumétrica del
-        Petróleo Original en Sitio.
+            <div class="home-card-separator"></div>
 
-        <br><br>
+            <div class="home-card-subtitle">
+                Modelo técnico
+            </div>
 
-        <b>Modelo técnico</b>
+            <div class="home-card-model">
+                POES + Volumen Recuperable
+            </div>
 
-        <br>
-
-        POES + Volumen Recuperable
-
-    </div>
-
-</div>
-"""
-
-    st.markdown(
-        textwrap.dedent(
-            tarjeta_reservorios
-        ),
-
-        unsafe_allow_html=True
+        </div>
+        """
     )
 
 
 # ==========================================================
-# INSTRUCCIÓN DE NAVEGACIÓN
+# INDICACIÓN PARA EL USUARIO
 # ==========================================================
 
 st.write("")
@@ -238,8 +195,7 @@ st.write("")
 
 st.info(
     "📊 Seleccione **Ejercicios** en el menú lateral "
-    "para acceder a los módulos de Producción, "
-    "Perforación y Reservorios."
+    "para acceder a Producción, Perforación y Reservorios."
 )
 
 
@@ -255,113 +211,119 @@ st.subheader(
 col4, col5, col6, col7 = st.columns(4)
 
 
+# ==========================================================
+# PYTHON
+# ==========================================================
+
 with col4:
 
-    st.markdown(
+    st.html(
         """
-        <div class="home-card">
+        <div class="tech-card">
 
-            <div class="home-card-icon">
+            <div class="tech-icon">
                 🐍
             </div>
 
-            <div class="home-card-title">
+            <div class="tech-title">
                 Python
             </div>
 
-            <div class="home-card-text">
-                Lógica y cálculos
-                de ingeniería
+            <div class="tech-text">
+                Lógica y cálculos de ingeniería
             </div>
 
         </div>
-        """,
-
-        unsafe_allow_html=True
+        """
     )
 
+
+# ==========================================================
+# STREAMLIT
+# ==========================================================
 
 with col5:
 
-    st.markdown(
+    st.html(
         """
-        <div class="home-card">
+        <div class="tech-card">
 
-            <div class="home-card-icon">
+            <div class="tech-icon">
                 🎈
             </div>
 
-            <div class="home-card-title">
+            <div class="tech-title">
                 Streamlit
             </div>
 
-            <div class="home-card-text">
-                Desarrollo de la
-                aplicación web
+            <div class="tech-text">
+                Desarrollo de la aplicación web
             </div>
 
         </div>
-        """,
-
-        unsafe_allow_html=True
+        """
     )
 
+
+# ==========================================================
+# HTML + CSS
+# ==========================================================
 
 with col6:
 
-    st.markdown(
+    st.html(
         """
-        <div class="home-card">
+        <div class="tech-card">
 
-            <div class="home-card-icon">
+            <div class="tech-icon">
                 🎨
             </div>
 
-            <div class="home-card-title">
+            <div class="tech-title">
                 HTML + CSS
             </div>
 
-            <div class="home-card-text">
-                Diseño y tarjetas
-                personalizadas
+            <div class="tech-text">
+                Diseño y componentes personalizados
             </div>
 
         </div>
-        """,
-
-        unsafe_allow_html=True
+        """
     )
 
+
+# ==========================================================
+# JAVASCRIPT
+# ==========================================================
 
 with col7:
 
-    st.markdown(
+    st.html(
         """
-        <div class="home-card">
+        <div class="tech-card">
 
-            <div class="home-card-icon">
+            <div class="tech-icon">
                 ⚡
             </div>
 
-            <div class="home-card-title">
+            <div class="tech-title">
                 JavaScript
             </div>
 
-            <div class="home-card-text">
-                Interacciones
-                dinámicas
+            <div class="tech-text">
+                Interacciones dinámicas
             </div>
 
         </div>
-        """,
-
-        unsafe_allow_html=True
+        """
     )
 
 
 # ==========================================================
-# INTERACCIÓN JAVASCRIPT
+# JAVASCRIPT INTERACTIVO
 # ==========================================================
+
+st.write("")
 
 st.subheader(
     "⚡ Componente Interactivo con JavaScript"
@@ -369,9 +331,8 @@ st.subheader(
 
 
 st.write(
-    "Este componente demuestra una interacción visible "
-    "implementada mediante JavaScript, de acuerdo con "
-    "los requisitos de la actividad."
+    "El siguiente componente demuestra una interacción "
+    "visible implementada mediante JavaScript."
 )
 
 
@@ -385,25 +346,22 @@ componente_javascript()
 st.divider()
 
 
-st.markdown(
+st.html(
     """
-    <div style="
-        text-align: center;
-        color: #4B5563;
-        padding-bottom: 20px;
-    ">
+    <div class="footer-oil">
 
-        <b>
+        <div class="footer-title">
             BOOTCAMP DATA ANALYTICS FOR OIL & GAS
-        </b>
+        </div>
 
-        <br>
+        <div class="footer-text">
+            Tarea Evaluativa – Módulo 1
+        </div>
 
-        Aplicación desarrollada con
-        Python + Streamlit
+        <div class="footer-text">
+            Aplicación desarrollada con Python + Streamlit
+        </div>
 
     </div>
-    """,
-
-    unsafe_allow_html=True
+    """
 )
