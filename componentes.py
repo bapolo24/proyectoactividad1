@@ -1,9 +1,8 @@
 import streamlit as st
-import textwrap
 
 
 # ==========================================================
-# TARJETA DE RESULTADOS
+# TARJETA PERSONALIZADA DE RESULTADOS
 # ==========================================================
 
 def tarjeta_resultado(
@@ -14,20 +13,15 @@ def tarjeta_resultado(
 ):
 
     html_tarjeta = f"""
-<div class="oil-card">
-    <div class="oil-card-icon">{icono}</div>
-    <div class="oil-card-title">{titulo}</div>
-    <div class="oil-card-value">{valor}</div>
-    <div class="oil-card-unit">{unidad}</div>
-</div>
-"""
+    <div class="oil-card">
+        <div class="oil-card-icon">{icono}</div>
+        <div class="oil-card-title">{titulo}</div>
+        <div class="oil-card-value">{valor}</div>
+        <div class="oil-card-unit">{unidad}</div>
+    </div>
+    """
 
-    st.markdown(
-        textwrap.dedent(
-            html_tarjeta
-        ),
-        unsafe_allow_html=True
-    )
+    st.html(html_tarjeta)
 
 
 # ==========================================================
@@ -41,16 +35,15 @@ def bloque_informativo(
 ):
 
     html_bloque = f"""
-<div class="technical-info">
-    <strong>{icono} {titulo}</strong>
-    <br><br>
-    {texto}
-</div>
-"""
+    <div class="technical-info">
+        <div class="technical-info-title">
+            {icono} {titulo}
+        </div>
 
-    st.markdown(
-        textwrap.dedent(
-            html_bloque
-        ),
-        unsafe_allow_html=True
-    )
+        <div class="technical-info-text">
+            {texto}
+        </div>
+    </div>
+    """
+
+    st.html(html_bloque)
