@@ -4,27 +4,22 @@ import numpy as np
 import plotly.graph_objects as go
 
 from componentes import tarjeta_resultado
-from estilos import cargar_estilos
 
 
 def show():
 
     # ==========================================================
-    # CARGAR ESTILOS
-    # ==========================================================
-
-    cargar_estilos()
-
-
-    # ==========================================================
     # ENCABEZADO
     # ==========================================================
 
-    st.header("🛢️ Producción – IPR Compuesta")
+    st.header(
+        "🛢️ Producción – IPR Compuesta"
+    )
 
     st.write(
-        "Calculadora de desempeño de afluencia para un yacimiento "
-        "de petróleo inicialmente subsaturado."
+        "Calculadora de desempeño de afluencia "
+        "para un yacimiento de petróleo "
+        "inicialmente subsaturado."
     )
 
 
@@ -39,6 +34,7 @@ def show():
 
         col1, col2 = st.columns(2)
 
+
         with col1:
 
             p_res = st.number_input(
@@ -48,12 +44,14 @@ def show():
                 key="prod_p_res"
             )
 
+
             ip = st.number_input(
                 "Índice de Productividad (J) [STB/d/psi]",
                 value=1.5,
                 step=0.1,
                 key="prod_ip"
             )
+
 
         with col2:
 
@@ -63,6 +61,7 @@ def show():
                 step=10.0,
                 key="prod_p_bur"
             )
+
 
             p_wf = st.number_input(
                 "Presión de Fondo Fluyente (Pwf) [psi]",
@@ -79,7 +78,7 @@ def show():
     if p_res <= 0:
 
         st.error(
-            "⚠️ La presión del reservorio debe ser mayor que cero."
+            "⚠️ Pr debe ser mayor que cero."
         )
 
         return
@@ -88,7 +87,7 @@ def show():
     if ip <= 0:
 
         st.error(
-            "⚠️ El índice de productividad debe ser mayor que cero."
+            "⚠️ J debe ser mayor que cero."
         )
 
         return
@@ -97,7 +96,7 @@ def show():
     if p_bur <= 0:
 
         st.error(
-            "⚠️ La presión de burbuja debe ser mayor que cero."
+            "⚠️ Pb debe ser mayor que cero."
         )
 
         return
@@ -106,7 +105,7 @@ def show():
     if p_bur >= p_res:
 
         st.error(
-            "⚠️ Para un reservorio inicialmente subsaturado "
+            "⚠️ Para el reservorio subsaturado "
             "debe cumplirse Pr > Pb."
         )
 
@@ -116,7 +115,7 @@ def show():
     if p_wf < 0:
 
         st.error(
-            "⚠️ La presión de fondo fluyente no puede ser negativa."
+            "⚠️ Pwf no puede ser negativa."
         )
 
         return
@@ -132,18 +131,16 @@ def show():
 
 
     # ==========================================================
-    # CAUDAL A LA PRESIÓN DE BURBUJA
-    #
-    # qb = J * (Pr - Pb)
+    # CAUDAL A Pb
     # ==========================================================
 
-    q_bur = ip * (p_res - p_bur)
+    q_bur = ip * (
+        p_res - p_bur
+    )
 
 
     # ==========================================================
-    # CAUDAL MÁXIMO TEÓRICO
-    #
-    # qmax = qb + (J * Pb / 1.8)
+    # CAUDAL MÁXIMO
     # ==========================================================
 
     q_max = q_bur + (
@@ -152,7 +149,7 @@ def show():
 
 
     # ==========================================================
-    # CÁLCULO DEL CAUDAL DE OPERACIÓN
+    # CAUDAL PARA Pwf INGRESADO
     # ==========================================================
 
     if p_wf >= p_bur:
@@ -162,8 +159,9 @@ def show():
         )
 
         condicion = (
-            "Región lineal – Pwf ≥ Pb"
+            "Región Lineal"
         )
+
 
     else:
 
@@ -172,25 +170,32 @@ def show():
         )
 
         q_o = q_bur + (
+
             (ip * p_bur / 1.8)
+
             *
+
             (
                 1
                 - 0.2 * relacion_presion
                 - 0.8 * relacion_presion**2
             )
+
         )
 
         condicion = (
-            "Región Vogel – Pwf < Pb"
+            "Región Vogel"
         )
 
 
     # ==========================================================
-    # RESULTADOS CON TARJETAS PERSONALIZADAS
+    # RESULTADOS
     # ==========================================================
 
-    st.subheader("📊 Resultados")
+    st.subheader(
+        "📊 Resultados"
+    )
+
 
     col1, col2, col3 = st.columns(3)
 
@@ -226,33 +231,29 @@ def show():
 
 
     # ==========================================================
-    # INDICADOR VISUAL DEL RÉGIMEN
+    # CONDICIÓN DE OPERACIÓN
     # ==========================================================
 
     if p_wf >= p_bur:
 
         st.success(
-            "🟢 REGIÓN LINEAL: Pwf ≥ Pb. "
-            "El petróleo se encuentra por encima "
-            "de la presión de burbuja."
+            "🟢 Pwf ≥ Pb → Región Lineal."
         )
 
     else:
 
         st.warning(
-            "🟡 REGIÓN VOGEL: Pwf < Pb. "
-            "Existe liberación de gas y la relación "
-            "caudal-presión deja de ser lineal."
+            "🟡 Pwf < Pb → Región Vogel."
         )
 
 
     st.info(
-        f"Condición de operación: **{condicion}**"
+        f"Condición actual: **{condicion}**"
     )
 
 
     # ==========================================================
-    # GENERACIÓN DE CURVA IPR
+    # CURVA IPR
     # ==========================================================
 
     pwf_vector = np.linspace(
@@ -260,6 +261,7 @@ def show():
         0,
         200
     )
+
 
     caudales = []
 
@@ -272,21 +274,28 @@ def show():
                 p_res - presion
             )
 
+
         else:
 
             relacion = (
                 presion / p_bur
             )
 
+
             q = q_bur + (
+
                 (ip * p_bur / 1.8)
+
                 *
+
                 (
                     1
                     - 0.2 * relacion
                     - 0.8 * relacion**2
                 )
+
             )
+
 
         caudales.append(q)
 
@@ -296,13 +305,10 @@ def show():
     )
 
 
-    # ==========================================================
-    # IDENTIFICAR REGIONES
-    # ==========================================================
-
     region_lineal = (
         pwf_vector >= p_bur
     )
+
 
     region_vogel = (
         pwf_vector < p_bur
@@ -325,22 +331,22 @@ def show():
 
 
     # ==========================================================
-    # GRÁFICO PLOTLY
+    # GRÁFICO
     # ==========================================================
 
     fig = go.Figure()
 
 
-    # ----------------------------------------------------------
-    # REGIÓN LINEAL
-    # ----------------------------------------------------------
-
     fig.add_trace(
         go.Scatter(
 
-            x=caudales[region_lineal],
+            x=caudales[
+                region_lineal
+            ],
 
-            y=pwf_vector[region_lineal],
+            y=pwf_vector[
+                region_lineal
+            ],
 
             mode="lines",
 
@@ -355,16 +361,16 @@ def show():
     )
 
 
-    # ----------------------------------------------------------
-    # REGIÓN VOGEL
-    # ----------------------------------------------------------
-
     fig.add_trace(
         go.Scatter(
 
-            x=caudales[region_vogel],
+            x=caudales[
+                region_vogel
+            ],
 
-            y=pwf_vector[region_vogel],
+            y=pwf_vector[
+                region_vogel
+            ],
 
             mode="lines",
 
@@ -379,9 +385,7 @@ def show():
     )
 
 
-    # ----------------------------------------------------------
-    # PUNTO DE OPERACIÓN
-    # ----------------------------------------------------------
+    # Punto operativo
 
     fig.add_trace(
         go.Scatter(
@@ -403,9 +407,7 @@ def show():
     )
 
 
-    # ----------------------------------------------------------
-    # PUNTO DE BURBUJA
-    # ----------------------------------------------------------
+    # Punto de burbuja
 
     fig.add_trace(
         go.Scatter(
@@ -427,46 +429,32 @@ def show():
     )
 
 
-    # ----------------------------------------------------------
-    # LÍNEA Pb
-    # ----------------------------------------------------------
-
     fig.add_hline(
 
         y=p_bur,
 
         line_dash="dash",
 
-        annotation_text="Pb",
-
-        annotation_position="top right"
+        annotation_text="Pb"
 
     )
 
 
-    # ==========================================================
-    # CONFIGURACIÓN DEL GRÁFICO
-    # ==========================================================
-
     fig.update_layout(
 
         title=(
-            "Curva IPR Compuesta "
-            "– Región Lineal + Vogel"
+            "Curva IPR Compuesta"
         ),
 
         xaxis_title=(
-            "Caudal de Petróleo qo [STB/d]"
+            "Caudal qo [STB/d]"
         ),
 
         yaxis_title=(
-            "Presión de Fondo Fluyente "
             "Pwf [psi]"
         ),
 
         template="plotly_dark",
-
-        hovermode="closest",
 
         height=600
 
@@ -480,7 +468,7 @@ def show():
 
 
     # ==========================================================
-    # TABLA DE DATOS
+    # TABLA
     # ==========================================================
 
     with st.expander(
@@ -502,7 +490,7 @@ def show():
     ):
 
         st.write(
-            "### Caudal a la presión de burbuja"
+            "### Caudal a Pb"
         )
 
         st.latex(
@@ -511,7 +499,7 @@ def show():
 
 
         st.write(
-            "### Para Pwf ≥ Pb"
+            "### Pwf ≥ Pb"
         )
 
         st.latex(
@@ -520,7 +508,7 @@ def show():
 
 
         st.write(
-            "### Para Pwf < Pb"
+            "### Pwf < Pb"
         )
 
         st.latex(
@@ -530,15 +518,21 @@ def show():
             \frac{J P_b}{1.8}
             \left[
             1
-            -0.2\left(\frac{P_{wf}}{P_b}\right)
-            -0.8\left(\frac{P_{wf}}{P_b}\right)^2
+            -0.2
+            \left(
+            \frac{P_{wf}}{P_b}
+            \right)
+            -0.8
+            \left(
+            \frac{P_{wf}}{P_b}
+            \right)^2
             \right]
             """
         )
 
 
         st.write(
-            "### Caudal máximo teórico"
+            "### Caudal máximo"
         )
 
         st.latex(
@@ -551,10 +545,6 @@ def show():
             """
         )
 
-
-# ==============================================================
-# EJECUCIÓN INDIVIDUAL PARA PRUEBAS
-# ==============================================================
 
 if __name__ == "__main__":
     show()
