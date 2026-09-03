@@ -2,18 +2,19 @@ import streamlit as st
 
 
 # ==========================================================
-# CONFIGURACIÓN GENERAL
+# CONFIGURACIÓN GENERAL DE LA APLICACIÓN
 # ==========================================================
 
 st.set_page_config(
     page_title="Oil & Gas Engineering",
     page_icon="🛢️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 
 # ==========================================================
-# PÁGINAS PRINCIPALES
+# DEFINICIÓN DE PÁGINAS
 # ==========================================================
 
 inicio = st.Page(
@@ -31,15 +32,21 @@ ejercicios = st.Page(
 
 
 # ==========================================================
-# NAVEGACIÓN
+# NAVEGACIÓN PRINCIPAL
 # ==========================================================
 
+paginas = [
+    inicio,
+    ejercicios
+]
+
 pagina = st.navigation(
-    [
-        inicio,
-        ejercicios
-    ]
+    paginas
 )
 
+
+# ==========================================================
+# EJECUTAR PÁGINA
+# ==========================================================
 
 pagina.run()
