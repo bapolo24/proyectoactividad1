@@ -1,192 +1,174 @@
-import streamlit as st
-
-from estilos import cargar_estilos
+import streamlit.components.v1 as components
 
 
-# ==========================================================
-# CARGAR ESTILOS GENERALES
-# ==========================================================
+def componente_javascript():
 
-cargar_estilos()
-
-
-# ==========================================================
-# ENCABEZADO PRINCIPAL
-# ==========================================================
-
-st.title(
-    "🛢️ Oil & Gas Engineering Dashboard"
-)
-
-st.subheader(
-    "Tarea Evaluativa – Módulo 1"
-)
-
-st.write(
-    """
-    Aplicación interactiva desarrollada con Python y Streamlit
-    para resolver y analizar problemas fundamentales de
-    Ingeniería de Producción, Perforación y Reservorios.
-    """
-)
-
-
-# ==========================================================
-# INFORMACIÓN GENERAL
-# ==========================================================
-
-st.markdown(
-    """
-    <div class="technical-info">
-
-        <b>🎯 Objetivo de la aplicación</b>
-
-        <br><br>
-
-        Integrar cálculos técnicos de Ingeniería de Petróleo
-        en una interfaz web interactiva que permita modificar
-        parámetros, analizar resultados y visualizar el
-        comportamiento de cada modelo.
-
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-# ==========================================================
-# MÓDULOS DISPONIBLES
-# ==========================================================
-
-st.subheader(
-    "📚 Módulos disponibles"
-)
-
-
-col1, col2, col3 = st.columns(3)
-
-
-# ==========================================================
-# PRODUCCIÓN
-# ==========================================================
-
-with col1:
-
-    st.markdown(
+    components.html(
         """
-        <div class="oil-card">
+        <!DOCTYPE html>
 
-            <div class="oil-card-icon">
-                🛢️
+        <html>
+
+        <head>
+
+            <style>
+
+                body {
+
+                    margin: 0;
+
+                    padding: 0;
+
+                    font-family:
+                        Arial,
+                        Helvetica,
+                        sans-serif;
+
+                    background:
+                        transparent;
+
+                    color:
+                        white;
+
+                    text-align:
+                        center;
+                }
+
+
+                #panel {
+
+                    background:
+                        linear-gradient(
+                            135deg,
+                            #102a43,
+                            #164e63
+                        );
+
+                    padding: 20px;
+
+                    border-radius: 14px;
+
+                    border:
+                        1px solid
+                        rgba(
+                            255,
+                            255,
+                            255,
+                            0.12
+                        );
+                }
+
+
+                button {
+
+                    background:
+                        #f4b942;
+
+                    color:
+                        #07111f;
+
+                    border:
+                        none;
+
+                    border-radius:
+                        8px;
+
+                    padding:
+                        11px 20px;
+
+                    font-size:
+                        14px;
+
+                    font-weight:
+                        bold;
+
+                    cursor:
+                        pointer;
+
+                    transition:
+                        transform 0.2s ease;
+                }
+
+
+                button:hover {
+
+                    transform:
+                        scale(1.05);
+                }
+
+
+                #mensaje {
+
+                    margin-top:
+                        15px;
+
+                    font-size:
+                        15px;
+
+                    line-height:
+                        1.7;
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            <div id="panel">
+
+                <h3>
+                    🛢️ Oil & Gas Engineering
+                </h3>
+
+                <p>
+                    Verificación interactiva
+                    de los módulos técnicos
+                </p>
+
+                <button
+                    onclick="verificarModulos()"
+                >
+
+                    Verificar módulos
+
+                </button>
+
+                <div id="mensaje">
+
+                    Presione el botón para
+                    ejecutar la interacción.
+
+                </div>
+
             </div>
 
-            <div class="oil-card-title">
-                PRODUCCIÓN
-            </div>
 
-            <div class="oil-card-value">
-                IPR Compuesta
-            </div>
+            <script>
 
-            <div class="oil-card-unit">
-                Región Lineal + Vogel
-            </div>
+                function verificarModulos() {
 
-        </div>
+                    const mensaje =
+                        document.getElementById(
+                            "mensaje"
+                        );
+
+                    mensaje.innerHTML =
+                        "✅ Producción: IPR Compuesta activa"
+                        + "<br>"
+                        + "✅ Perforación: Presión Hidrostática activa"
+                        + "<br>"
+                        + "✅ Reservorios: POES activo";
+
+                }
+
+            </script>
+
+        </body>
+
+        </html>
         """,
-        unsafe_allow_html=True
+
+        height=250
     )
-
-
-# ==========================================================
-# PERFORACIÓN
-# ==========================================================
-
-with col2:
-
-    st.markdown(
-        """
-        <div class="oil-card">
-
-            <div class="oil-card-icon">
-                🏗️
-            </div>
-
-            <div class="oil-card-title">
-                PERFORACIÓN
-            </div>
-
-            <div class="oil-card-value">
-                Presión Hidrostática
-            </div>
-
-            <div class="oil-card-unit">
-                PH – Gradiente – Balance
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-# ==========================================================
-# RESERVORIOS
-# ==========================================================
-
-with col3:
-
-    st.markdown(
-        """
-        <div class="oil-card">
-
-            <div class="oil-card-icon">
-                🪨
-            </div>
-
-            <div class="oil-card-title">
-                RESERVORIOS
-            </div>
-
-            <div class="oil-card-value">
-                POES
-            </div>
-
-            <div class="oil-card-unit">
-                Volumétrico + Recuperable
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-# ==========================================================
-# ESPACIO
-# ==========================================================
-
-st.write("")
-
-
-# ==========================================================
-# ACCESO A LOS EJERCICIOS
-# ==========================================================
-
-st.page_link(
-    "ejercicios.py",
-    label="📊 Abrir Ejercicios de Ingeniería de Petróleo",
-    icon="📊",
-    use_container_width=True
-)
-
-
-# ==========================================================
-# INFORMACIÓN DE NAVEGACIÓN
-# ==========================================================
-
-st.info(
-    "ℹ️ En la sección Ejercicios encontrarás los módulos "
-    "de Producción, Perforación y Reservorios organizados "
-    "mediante pestañas."
-)
