@@ -1,10 +1,10 @@
 import streamlit as st
 
+from estilos import cargar_estilos
+
 from produccion import show as show_produccion
 from perforacion import show as show_perforacion
 from reservorios import show as show_reservorios
-
-from estilos import cargar_estilos
 
 
 # ==========================================================
@@ -23,12 +23,15 @@ st.title(
 )
 
 st.write(
-    "Seleccione el área técnica que desea analizar."
+    """
+    Seleccione el módulo técnico mediante las pestañas
+    disponibles.
+    """
 )
 
 
 # ==========================================================
-# TABS DE LOS EJERCICIOS
+# CREACIÓN DE TABS
 # ==========================================================
 
 tab1, tab2, tab3 = st.tabs(
