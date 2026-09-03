@@ -25,6 +25,11 @@ def show():
     
     # Curva IPR
     fig.add_trace(go.Scatter(
-    x=caudales, y=pwf,
+    x=caudales,
+    y=pwf,
     name="IPR (Oferta Yacimiento)",
-    line=dict(color='#00FF90', width=3.5)
+    line=dict(
+        color="#00FF90",
+        width=3.5
+    )
+))
