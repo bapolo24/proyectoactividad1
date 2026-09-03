@@ -4,17 +4,20 @@ from produccion import show as show_produccion
 from perforacion import show as show_perforacion
 from reservorios import show as show_reservorios
 
+from estilos import cargar_estilos
 
-st.title("📊 Ejercicios de Ingeniería de Petróleo")
+
+cargar_estilos()
+
+
+st.title(
+    "📊 Ejercicios de Ingeniería de Petróleo"
+)
 
 st.write(
     "Seleccione el área técnica que desea analizar."
 )
 
-
-# ==========================================================
-# TABS
-# ==========================================================
 
 tab1, tab2, tab3 = st.tabs(
     [
@@ -38,6 +41,3 @@ with tab2:
 with tab3:
 
     show_reservorios()
-from estilos import cargar_estilos
-
-cargar_estilos()
