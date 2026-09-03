@@ -17,23 +17,44 @@ cargar_estilos()
 # ENCABEZADO PRINCIPAL
 # ==========================================================
 
-st.title(
-    "🛢️ Tarea Evaluativa – Módulo 1"
-)
-
-
 st.markdown(
     """
-    ### Desarrollo de una aplicación web para Oil & Gas
-    ### con Streamlit, HTML, CSS y JavaScript
-    """
-)
+    <div style="
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    ">
+
+        <h1 style="
+            color: #1F2937;
+            margin-bottom: 10px;
+        ">
+            🛢️ Tarea Evaluativa – Módulo 1
+        </h1>
 
 
-st.markdown(
-    """
-    **BOOTCAMP DATA ANALYTICS FOR OIL & GAS**
-    """
+        <h3 style="
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 10px;
+        ">
+            Desarrollo de una aplicación web para Oil & Gas
+            con Streamlit, HTML, CSS y JavaScript
+        </h3>
+
+
+        <p style="
+            color: #4B5563;
+            font-size: 18px;
+            font-weight: bold;
+        ">
+            BOOTCAMP DATA ANALYTICS FOR OIL & GAS
+        </p>
+
+    </div>
+    """,
+
+    unsafe_allow_html=True
 )
 
 
@@ -41,19 +62,22 @@ st.divider()
 
 
 # ==========================================================
-# DESCRIPCIÓN GENERAL
+# DESCRIPCIÓN DEL PROYECTO
 # ==========================================================
 
 bloque_informativo(
 
-    "Descripción del proyecto",
+    "Objetivo del Proyecto",
 
     """
-    Aplicación web interactiva orientada a Ingeniería de Petróleo.
-    Integra tres ejercicios técnicos correspondientes a las áreas
-    de Producción, Perforación y Reservorios, combinando cálculos
-    de ingeniería con herramientas de visualización y desarrollo
-    web mediante Streamlit, HTML, CSS y JavaScript.
+    Desarrollar una aplicación web interactiva orientada
+    a la Ingeniería de Petróleo, integrando cálculos
+    técnicos de Producción, Perforación y Reservorios
+    mediante Python y Streamlit.
+
+    La aplicación incorpora además elementos personalizados
+    mediante HTML, CSS, JavaScript y visualizaciones
+    interactivas con Plotly.
     """,
 
     "🎯"
@@ -61,7 +85,7 @@ bloque_informativo(
 
 
 # ==========================================================
-# MÓDULOS
+# MÓDULOS TÉCNICOS
 # ==========================================================
 
 st.subheader(
@@ -86,16 +110,22 @@ with col1:
     </div>
 
     <div class="home-card-title">
-        Producción
+        PRODUCCIÓN
     </div>
 
     <div class="home-card-text">
-        Análisis de desempeño de afluencia mediante
-        una IPR compuesta para un reservorio inicialmente
-        subsaturado.
+
+        Análisis del desempeño de afluencia
+        mediante una IPR compuesta.
+
         <br><br>
-        <b>Modelo:</b><br>
-        Lineal + Vogel
+
+        <b>Modelo técnico</b>
+
+        <br>
+
+        Región Lineal + Vogel
+
     </div>
 
 </div>
@@ -105,6 +135,7 @@ with col1:
         textwrap.dedent(
             tarjeta_produccion
         ),
+
         unsafe_allow_html=True
     )
 
@@ -123,15 +154,23 @@ with col2:
     </div>
 
     <div class="home-card-title">
-        Perforación
+        PERFORACIÓN
     </div>
 
     <div class="home-card-text">
-        Cálculo del gradiente y presión hidrostática
-        generada por la columna de lodo de perforación.
+
+        Cálculo del gradiente y
+        presión hidrostática del
+        fluido de perforación.
+
         <br><br>
-        <b>Análisis:</b><br>
+
+        <b>Análisis técnico</b>
+
+        <br>
+
         Sobrebalance / Balance / Bajo balance
+
     </div>
 
 </div>
@@ -141,6 +180,7 @@ with col2:
         textwrap.dedent(
             tarjeta_perforacion
         ),
+
         unsafe_allow_html=True
     )
 
@@ -159,15 +199,22 @@ with col3:
     </div>
 
     <div class="home-card-title">
-        Reservorios
+        RESERVORIOS
     </div>
 
     <div class="home-card-text">
-        Estimación volumétrica del Petróleo Original
-        en Sitio y del volumen potencialmente recuperable.
+
+        Estimación volumétrica del
+        Petróleo Original en Sitio.
+
         <br><br>
-        <b>Modelo:</b><br>
-        Método volumétrico del POES
+
+        <b>Modelo técnico</b>
+
+        <br>
+
+        POES + Volumen Recuperable
+
     </div>
 
 </div>
@@ -177,6 +224,7 @@ with col3:
         textwrap.dedent(
             tarjeta_reservorios
         ),
+
         unsafe_allow_html=True
     )
 
@@ -189,25 +237,173 @@ st.write("")
 
 
 st.info(
-    "📊 Seleccione **Ejercicios** en el menú lateral para "
-    "acceder a los cálculos de Producción, Perforación "
-    "y Reservorios."
+    "📊 Seleccione **Ejercicios** en el menú lateral "
+    "para acceder a los módulos de Producción, "
+    "Perforación y Reservorios."
 )
 
 
 # ==========================================================
-# COMPONENTE JAVASCRIPT
+# TECNOLOGÍAS UTILIZADAS
 # ==========================================================
 
 st.subheader(
-    "💻 Interacción Web"
+    "💻 Tecnologías Utilizadas"
+)
+
+
+col4, col5, col6, col7 = st.columns(4)
+
+
+with col4:
+
+    st.markdown(
+        """
+        <div class="home-card">
+
+            <div class="home-card-icon">
+                🐍
+            </div>
+
+            <div class="home-card-title">
+                Python
+            </div>
+
+            <div class="home-card-text">
+                Lógica y cálculos
+                de ingeniería
+            </div>
+
+        </div>
+        """,
+
+        unsafe_allow_html=True
+    )
+
+
+with col5:
+
+    st.markdown(
+        """
+        <div class="home-card">
+
+            <div class="home-card-icon">
+                🎈
+            </div>
+
+            <div class="home-card-title">
+                Streamlit
+            </div>
+
+            <div class="home-card-text">
+                Desarrollo de la
+                aplicación web
+            </div>
+
+        </div>
+        """,
+
+        unsafe_allow_html=True
+    )
+
+
+with col6:
+
+    st.markdown(
+        """
+        <div class="home-card">
+
+            <div class="home-card-icon">
+                🎨
+            </div>
+
+            <div class="home-card-title">
+                HTML + CSS
+            </div>
+
+            <div class="home-card-text">
+                Diseño y tarjetas
+                personalizadas
+            </div>
+
+        </div>
+        """,
+
+        unsafe_allow_html=True
+    )
+
+
+with col7:
+
+    st.markdown(
+        """
+        <div class="home-card">
+
+            <div class="home-card-icon">
+                ⚡
+            </div>
+
+            <div class="home-card-title">
+                JavaScript
+            </div>
+
+            <div class="home-card-text">
+                Interacciones
+                dinámicas
+            </div>
+
+        </div>
+        """,
+
+        unsafe_allow_html=True
+    )
+
+
+# ==========================================================
+# INTERACCIÓN JAVASCRIPT
+# ==========================================================
+
+st.subheader(
+    "⚡ Componente Interactivo con JavaScript"
 )
 
 
 st.write(
-    "El siguiente componente incorpora una interacción "
-    "implementada mediante JavaScript."
+    "Este componente demuestra una interacción visible "
+    "implementada mediante JavaScript, de acuerdo con "
+    "los requisitos de la actividad."
 )
 
 
 componente_javascript()
+
+
+# ==========================================================
+# PIE DE PÁGINA
+# ==========================================================
+
+st.divider()
+
+
+st.markdown(
+    """
+    <div style="
+        text-align: center;
+        color: #4B5563;
+        padding-bottom: 20px;
+    ">
+
+        <b>
+            BOOTCAMP DATA ANALYTICS FOR OIL & GAS
+        </b>
+
+        <br>
+
+        Aplicación desarrollada con
+        Python + Streamlit
+
+    </div>
+    """,
+
+    unsafe_allow_html=True
+)
