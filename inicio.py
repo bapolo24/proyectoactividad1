@@ -7,3 +7,6 @@ st.page_link("reservorios.py", label="Abrir Modulo de reservorios", icon="🌍")
 from estilos import cargar_estilos
 
 cargar_estilos()
+from interacciones import componente_javascript
+
+componente_javascript()
