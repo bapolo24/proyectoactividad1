@@ -1,20 +1,11 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import plotly.graph_objects as go
 
 from componentes import tarjeta_resultado
-from estilos import cargar_estilos
 
 
 def show():
-
-    # ==========================================================
-    # CARGAR ESTILOS
-    # ==========================================================
-
-    cargar_estilos()
-
 
     # ==========================================================
     # ENCABEZADO
@@ -24,15 +15,16 @@ def show():
         "🪨 Reservorios – Estimación Volumétrica del POES"
     )
 
+
     st.write(
-        "Calculadora volumétrica para estimar el "
-        "Petróleo Original en Sitio (POES) y el "
-        "volumen de petróleo potencialmente recuperable."
+        "Calculadora volumétrica para estimar "
+        "el Petróleo Original en Sitio (POES) "
+        "y el volumen recuperable."
     )
 
 
     # ==========================================================
-    # PARÁMETROS DEL RESERVORIO
+    # PARÁMETROS
     # ==========================================================
 
     with st.expander(
@@ -91,7 +83,7 @@ def show():
 
 
             Boi = st.number_input(
-                "Factor Volumétrico Inicial del Petróleo "
+                "Factor Volumétrico Inicial "
                 "(Boi) [rb/STB]",
                 value=1.20,
                 step=0.01,
@@ -110,7 +102,7 @@ def show():
 
 
         st.caption(
-            "ℹ️ NTG, porosidad, Swi y FR deben "
+            "NTG, porosidad, Swi y FR deben "
             "ingresarse como fracciones. "
             "Ejemplo: 20 % = 0.20."
         )
@@ -123,7 +115,7 @@ def show():
     if A <= 0:
 
         st.error(
-            "⚠️ El área A debe ser mayor que cero."
+            "⚠️ A debe ser mayor que cero."
         )
 
         return
@@ -132,8 +124,7 @@ def show():
     if h <= 0:
 
         st.error(
-            "⚠️ El espesor bruto h debe ser "
-            "mayor que cero."
+            "⚠️ h debe ser mayor que cero."
         )
 
         return
@@ -142,7 +133,7 @@ def show():
     if NTG < 0 or NTG > 1:
 
         st.error(
-            "⚠️ NTG debe encontrarse entre 0 y 1."
+            "⚠️ NTG debe estar entre 0 y 1."
         )
 
         return
@@ -151,7 +142,7 @@ def show():
     if poro < 0 or poro > 1:
 
         st.error(
-            "⚠️ La porosidad debe encontrarse "
+            "⚠️ La porosidad debe estar "
             "entre 0 y 1."
         )
 
@@ -161,7 +152,7 @@ def show():
     if Swi < 0 or Swi > 1:
 
         st.error(
-            "⚠️ Swi debe encontrarse entre 0 y 1."
+            "⚠️ Swi debe estar entre 0 y 1."
         )
 
         return
@@ -179,51 +170,42 @@ def show():
     if FR < 0 or FR > 1:
 
         st.error(
-            "⚠️ FR debe encontrarse entre 0 y 1."
+            "⚠️ FR debe estar entre 0 y 1."
         )
 
         return
 
 
     # ==========================================================
-    # SATURACIÓN INICIAL DE PETRÓLEO
+    # CÁLCULOS
     # ==========================================================
 
-    So = 1 - Swi
+    So = (
+        1 - Swi
+    )
 
-
-    # ==========================================================
-    # ESPESOR NETO
-    #
-    # h_n = h * NTG
-    # ==========================================================
 
     h_n = (
-        h
-        * NTG
+        h * NTG
     )
 
-
-    # ==========================================================
-    # PETRÓLEO ORIGINAL EN SITIO
-    #
-    # POES =
-    # 7758 * A * h_n * poro * (1-Swi) / Boi
-    # ==========================================================
 
     POES = (
+
         7758
+
         * A
+
         * h_n
+
         * poro
+
         * (1 - Swi)
+
         / Boi
+
     )
 
-
-    # ==========================================================
-    # POES EN MMSTB
-    # ==========================================================
 
     POES_MMSTB = (
         POES
@@ -231,19 +213,11 @@ def show():
     )
 
 
-    # ==========================================================
-    # PETRÓLEO RECUPERABLE
-    # ==========================================================
-
     RECUPERABLE = (
         POES
         * FR
     )
 
-
-    # ==========================================================
-    # PETRÓLEO RECUPERABLE EN MMSTB
-    # ==========================================================
 
     RECUPERABLE_MMSTB = (
         RECUPERABLE
@@ -252,7 +226,7 @@ def show():
 
 
     # ==========================================================
-    # RESULTADOS PRINCIPALES
+    # RESULTADOS
     # ==========================================================
 
     st.subheader(
@@ -293,10 +267,6 @@ def show():
         )
 
 
-    # ==========================================================
-    # RESULTADOS COMPLEMENTARIOS
-    # ==========================================================
-
     col4, col5, col6 = st.columns(3)
 
 
@@ -336,8 +306,8 @@ def show():
 
     st.success(
         f"🟢 Con un factor de recobro de "
-        f"{FR * 100:.1f} %, el volumen "
-        f"potencialmente recuperable es de "
+        f"{FR * 100:.1f} %, se estima un volumen "
+        f"recuperable de "
         f"{RECUPERABLE_MMSTB:,.2f} MMSTB."
     )
 
@@ -349,34 +319,25 @@ def show():
     dataFrame = pd.DataFrame({
 
         "Volumen": [
-
             "POES",
-
             "Petróleo Recuperable"
-
         ],
 
         "STB": [
-
             POES,
-
             RECUPERABLE
-
         ],
 
         "MMSTB": [
-
             POES_MMSTB,
-
             RECUPERABLE_MMSTB
-
         ]
 
     })
 
 
     # ==========================================================
-    # GRÁFICO POES VS RECUPERABLE
+    # GRÁFICO
     # ==========================================================
 
     fig = go.Figure()
@@ -386,29 +347,18 @@ def show():
         go.Bar(
 
             x=[
-
                 "POES",
-
                 "Petróleo Recuperable"
-
             ],
 
             y=[
-
                 POES_MMSTB,
-
                 RECUPERABLE_MMSTB
-
             ],
 
-            name="Volumen",
-
             text=[
-
                 f"{POES_MMSTB:,.2f} MMSTB",
-
                 f"{RECUPERABLE_MMSTB:,.2f} MMSTB"
-
             ],
 
             textposition="auto",
@@ -426,26 +376,17 @@ def show():
     )
 
 
-    # ==========================================================
-    # CONFIGURACIÓN DEL GRÁFICO
-    # ==========================================================
-
     fig.update_layout(
 
         title=(
-            "Comparación del POES "
-            "y Petróleo Recuperable"
+            "POES vs Petróleo Recuperable"
         ),
 
         xaxis_title="Volumen",
 
-        yaxis_title=(
-            "Volumen [MMSTB]"
-        ),
+        yaxis_title="MMSTB",
 
         template="plotly_dark",
-
-        hovermode="closest",
 
         height=600
 
@@ -530,23 +471,6 @@ def show():
             """
         )
 
-
-        st.write(
-            "### Conversión a MMSTB"
-        )
-
-        st.latex(
-            r"""
-            MMSTB
-            =
-            \frac{STB}{1{,}000{,}000}
-            """
-        )
-
-
-# ==============================================================
-# EJECUCIÓN INDIVIDUAL PARA PRUEBAS
-# ==============================================================
 
 if __name__ == "__main__":
     show()
