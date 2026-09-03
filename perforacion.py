@@ -160,7 +160,7 @@ def show():
     # CONDICIÓN DE BALANCE
     # ==========================================================
 
-    tolerancia_balance = 50.0
+    tolerancia_balance = 0
 
 
     if DIF_P > tolerancia_balance:
