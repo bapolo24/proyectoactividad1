@@ -38,3 +38,6 @@ with tab2:
 with tab3:
 
     show_reservorios()
+from estilos import cargar_estilos
+
+cargar_estilos()
