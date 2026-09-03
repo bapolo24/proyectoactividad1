@@ -1,174 +1,213 @@
-import streamlit.components.v1 as components
+import streamlit as st
+import textwrap
+
+from estilos import cargar_estilos
+from componentes import bloque_informativo
+from interacciones import componente_javascript
 
 
-def componente_javascript():
+# ==========================================================
+# CARGAR ESTILOS
+# ==========================================================
 
-    components.html(
-        """
-        <!DOCTYPE html>
-
-        <html>
-
-        <head>
-
-            <style>
-
-                body {
-
-                    margin: 0;
-
-                    padding: 0;
-
-                    font-family:
-                        Arial,
-                        Helvetica,
-                        sans-serif;
-
-                    background:
-                        transparent;
-
-                    color:
-                        white;
-
-                    text-align:
-                        center;
-                }
+cargar_estilos()
 
 
-                #panel {
+# ==========================================================
+# ENCABEZADO PRINCIPAL
+# ==========================================================
 
-                    background:
-                        linear-gradient(
-                            135deg,
-                            #102a43,
-                            #164e63
-                        );
-
-                    padding: 20px;
-
-                    border-radius: 14px;
-
-                    border:
-                        1px solid
-                        rgba(
-                            255,
-                            255,
-                            255,
-                            0.12
-                        );
-                }
+st.title(
+    "🛢️ Tarea Evaluativa – Módulo 1"
+)
 
 
-                button {
-
-                    background:
-                        #f4b942;
-
-                    color:
-                        #07111f;
-
-                    border:
-                        none;
-
-                    border-radius:
-                        8px;
-
-                    padding:
-                        11px 20px;
-
-                    font-size:
-                        14px;
-
-                    font-weight:
-                        bold;
-
-                    cursor:
-                        pointer;
-
-                    transition:
-                        transform 0.2s ease;
-                }
+st.markdown(
+    """
+    ### Desarrollo de una aplicación web para Oil & Gas
+    ### con Streamlit, HTML, CSS y JavaScript
+    """
+)
 
 
-                button:hover {
-
-                    transform:
-                        scale(1.05);
-                }
-
-
-                #mensaje {
-
-                    margin-top:
-                        15px;
-
-                    font-size:
-                        15px;
-
-                    line-height:
-                        1.7;
-                }
-
-            </style>
-
-        </head>
+st.markdown(
+    """
+    **BOOTCAMP DATA ANALYTICS FOR OIL & GAS**
+    """
+)
 
 
-        <body>
-
-            <div id="panel">
-
-                <h3>
-                    🛢️ Oil & Gas Engineering
-                </h3>
-
-                <p>
-                    Verificación interactiva
-                    de los módulos técnicos
-                </p>
-
-                <button
-                    onclick="verificarModulos()"
-                >
-
-                    Verificar módulos
-
-                </button>
-
-                <div id="mensaje">
-
-                    Presione el botón para
-                    ejecutar la interacción.
-
-                </div>
-
-            </div>
+st.divider()
 
 
-            <script>
+# ==========================================================
+# DESCRIPCIÓN GENERAL
+# ==========================================================
 
-                function verificarModulos() {
+bloque_informativo(
 
-                    const mensaje =
-                        document.getElementById(
-                            "mensaje"
-                        );
+    "Descripción del proyecto",
 
-                    mensaje.innerHTML =
-                        "✅ Producción: IPR Compuesta activa"
-                        + "<br>"
-                        + "✅ Perforación: Presión Hidrostática activa"
-                        + "<br>"
-                        + "✅ Reservorios: POES activo";
+    """
+    Aplicación web interactiva orientada a Ingeniería de Petróleo.
+    Integra tres ejercicios técnicos correspondientes a las áreas
+    de Producción, Perforación y Reservorios, combinando cálculos
+    de ingeniería con herramientas de visualización y desarrollo
+    web mediante Streamlit, HTML, CSS y JavaScript.
+    """,
 
-                }
+    "🎯"
+)
 
-            </script>
 
-        </body>
+# ==========================================================
+# MÓDULOS
+# ==========================================================
 
-        </html>
-        """,
+st.subheader(
+    "⚙️ Módulos Técnicos"
+)
 
-        height=250
+
+col1, col2, col3 = st.columns(3)
+
+
+# ==========================================================
+# PRODUCCIÓN
+# ==========================================================
+
+with col1:
+
+    tarjeta_produccion = """
+<div class="home-card">
+
+    <div class="home-card-icon">
+        🛢️
+    </div>
+
+    <div class="home-card-title">
+        Producción
+    </div>
+
+    <div class="home-card-text">
+        Análisis de desempeño de afluencia mediante
+        una IPR compuesta para un reservorio inicialmente
+        subsaturado.
+        <br><br>
+        <b>Modelo:</b><br>
+        Lineal + Vogel
+    </div>
+
+</div>
+"""
+
+    st.markdown(
+        textwrap.dedent(
+            tarjeta_produccion
+        ),
+        unsafe_allow_html=True
     )
+
+
+# ==========================================================
+# PERFORACIÓN
+# ==========================================================
+
+with col2:
+
+    tarjeta_perforacion = """
+<div class="home-card">
+
+    <div class="home-card-icon">
+        🏗️
+    </div>
+
+    <div class="home-card-title">
+        Perforación
+    </div>
+
+    <div class="home-card-text">
+        Cálculo del gradiente y presión hidrostática
+        generada por la columna de lodo de perforación.
+        <br><br>
+        <b>Análisis:</b><br>
+        Sobrebalance / Balance / Bajo balance
+    </div>
+
+</div>
+"""
+
+    st.markdown(
+        textwrap.dedent(
+            tarjeta_perforacion
+        ),
+        unsafe_allow_html=True
+    )
+
+
+# ==========================================================
+# RESERVORIOS
+# ==========================================================
+
+with col3:
+
+    tarjeta_reservorios = """
+<div class="home-card">
+
+    <div class="home-card-icon">
+        🪨
+    </div>
+
+    <div class="home-card-title">
+        Reservorios
+    </div>
+
+    <div class="home-card-text">
+        Estimación volumétrica del Petróleo Original
+        en Sitio y del volumen potencialmente recuperable.
+        <br><br>
+        <b>Modelo:</b><br>
+        Método volumétrico del POES
+    </div>
+
+</div>
+"""
+
+    st.markdown(
+        textwrap.dedent(
+            tarjeta_reservorios
+        ),
+        unsafe_allow_html=True
+    )
+
+
+# ==========================================================
+# INSTRUCCIÓN DE NAVEGACIÓN
+# ==========================================================
+
+st.write("")
+
+
+st.info(
+    "📊 Seleccione **Ejercicios** en el menú lateral para "
+    "acceder a los cálculos de Producción, Perforación "
+    "y Reservorios."
+)
+
+
+# ==========================================================
+# COMPONENTE JAVASCRIPT
+# ==========================================================
+
+st.subheader(
+    "💻 Interacción Web"
+)
+
+
+st.write(
+    "El siguiente componente incorpora una interacción "
+    "implementada mediante JavaScript."
+)
+
+
+componente_javascript()
