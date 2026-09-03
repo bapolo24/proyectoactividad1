@@ -4,3 +4,6 @@ st.write("Selecciona un modulo")  # Orienta al usuario sobre las opciones dispon
 st.page_link("produccion.py", label="Abrir Modulo de Prouccion", icon="🛢️")  # Crea un enlace visible hacia la calculadora.
 st.page_link("perforacion.py", label="Abrir Modulo de Perforacion", icon="🏗️")  # Crea un segundo enlace visible hacia el resumen.
 st.page_link("reservorios.py", label="Abrir Modulo de reservorios", icon="🌍")  # Crea un segundo enlace visible hacia el resumen.
+from estilos import cargar_estilos
+
+cargar_estilos()
