@@ -3,70 +3,116 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
+from componentes import tarjeta_resultado
+from estilos import cargar_estilos
+
 
 def show():
 
-    st.header("🪨 Reservorios")
+    # ==========================================================
+    # CARGAR ESTILOS
+    # ==========================================================
+
+    cargar_estilos()
+
+
+    # ==========================================================
+    # ENCABEZADO
+    # ==========================================================
+
+    st.header(
+        "🪨 Reservorios – Estimación Volumétrica del POES"
+    )
 
     st.write(
-        "Calculadora volumétrica para estimar el Petróleo Original "
-        "en Sitio (POES) y el volumen recuperable."
+        "Calculadora volumétrica para estimar el "
+        "Petróleo Original en Sitio (POES) y el "
+        "volumen de petróleo potencialmente recuperable."
     )
+
 
     # ==========================================================
     # PARÁMETROS DEL RESERVORIO
     # ==========================================================
 
-    with st.sidebar.expander(
+    with st.expander(
         "🪨 Parámetros del Reservorio",
         expanded=True
     ):
 
-        A = st.number_input(
-            "Área del reservorio (A) [acres]",
-            value=1800.0,
-            step=100.0
-        )
+        col1, col2 = st.columns(2)
 
-        h = st.number_input(
-            "Espesor bruto (h) [ft]",
-            value=70.0,
-            step=5.0
-        )
 
-        NTG = st.number_input(
-            "Net-to-Gross (NTG) [fracción]",
-            value=0.80,
-            step=0.01,
-            format="%.2f"
-        )
+        with col1:
 
-        poro = st.number_input(
-            "Porosidad efectiva (poro) [fracción]",
-            value=0.20,
-            step=0.01,
-            format="%.2f"
-        )
+            A = st.number_input(
+                "Área del Reservorio (A) [acres]",
+                value=1800.0,
+                step=100.0,
+                key="res_A"
+            )
 
-        Swi = st.number_input(
-            "Saturación inicial de agua (Swi) [fracción]",
-            value=0.20,
-            step=0.01,
-            format="%.2f"
-        )
 
-        Boi = st.number_input(
-            "Factor volumétrico inicial del petróleo (Boi) [rb/STB]",
-            value=1.20,
-            step=0.01,
-            format="%.2f"
-        )
+            h = st.number_input(
+                "Espesor Bruto (h) [ft]",
+                value=70.0,
+                step=5.0,
+                key="res_h"
+            )
 
-        FR = st.number_input(
-            "Factor de recobro (FR) [fracción]",
-            value=0.30,
-            step=0.01,
-            format="%.2f"
+
+            NTG = st.number_input(
+                "Net-to-Gross (NTG) [fracción]",
+                value=0.80,
+                step=0.01,
+                format="%.2f",
+                key="res_NTG"
+            )
+
+
+            poro = st.number_input(
+                "Porosidad Efectiva (poro) [fracción]",
+                value=0.20,
+                step=0.01,
+                format="%.2f",
+                key="res_poro"
+            )
+
+
+        with col2:
+
+            Swi = st.number_input(
+                "Saturación Inicial de Agua (Swi) [fracción]",
+                value=0.20,
+                step=0.01,
+                format="%.2f",
+                key="res_Swi"
+            )
+
+
+            Boi = st.number_input(
+                "Factor Volumétrico Inicial del Petróleo "
+                "(Boi) [rb/STB]",
+                value=1.20,
+                step=0.01,
+                format="%.2f",
+                key="res_Boi"
+            )
+
+
+            FR = st.number_input(
+                "Factor de Recobro (FR) [fracción]",
+                value=0.30,
+                step=0.01,
+                format="%.2f",
+                key="res_FR"
+            )
+
+
+        st.caption(
+            "ℹ️ NTG, porosidad, Swi y FR deben "
+            "ingresarse como fracciones. "
+            "Ejemplo: 20 % = 0.20."
         )
 
 
@@ -77,7 +123,7 @@ def show():
     if A <= 0:
 
         st.error(
-            "⚠️ El área del reservorio A debe ser mayor que cero."
+            "⚠️ El área A debe ser mayor que cero."
         )
 
         return
@@ -86,7 +132,8 @@ def show():
     if h <= 0:
 
         st.error(
-            "⚠️ El espesor bruto h debe ser mayor que cero."
+            "⚠️ El espesor bruto h debe ser "
+            "mayor que cero."
         )
 
         return
@@ -95,7 +142,7 @@ def show():
     if NTG < 0 or NTG > 1:
 
         st.error(
-            "⚠️ NTG debe ingresarse como fracción entre 0 y 1."
+            "⚠️ NTG debe encontrarse entre 0 y 1."
         )
 
         return
@@ -104,8 +151,8 @@ def show():
     if poro < 0 or poro > 1:
 
         st.error(
-            "⚠️ La porosidad efectiva debe ingresarse como "
-            "fracción entre 0 y 1."
+            "⚠️ La porosidad debe encontrarse "
+            "entre 0 y 1."
         )
 
         return
@@ -114,7 +161,7 @@ def show():
     if Swi < 0 or Swi > 1:
 
         st.error(
-            "⚠️ Swi debe ingresarse como fracción entre 0 y 1."
+            "⚠️ Swi debe encontrarse entre 0 y 1."
         )
 
         return
@@ -132,11 +179,17 @@ def show():
     if FR < 0 or FR > 1:
 
         st.error(
-            "⚠️ El factor de recobro FR debe ingresarse como "
-            "fracción entre 0 y 1."
+            "⚠️ FR debe encontrarse entre 0 y 1."
         )
 
         return
+
+
+    # ==========================================================
+    # SATURACIÓN INICIAL DE PETRÓLEO
+    # ==========================================================
+
+    So = 1 - Swi
 
 
     # ==========================================================
@@ -145,13 +198,17 @@ def show():
     # h_n = h * NTG
     # ==========================================================
 
-    h_n = h * NTG
+    h_n = (
+        h
+        * NTG
+    )
 
 
     # ==========================================================
-    # PETRÓLEO ORIGINAL EN SITIO - POES
+    # PETRÓLEO ORIGINAL EN SITIO
     #
-    # POES = 7758 * A * h_n * poro * (1 - Swi) / Boi
+    # POES =
+    # 7758 * A * h_n * poro * (1-Swi) / Boi
     # ==========================================================
 
     POES = (
@@ -165,147 +222,205 @@ def show():
 
 
     # ==========================================================
-    # POES EN MILLONES DE BARRILES
+    # POES EN MMSTB
     # ==========================================================
 
-    POES_MMSTB = POES / 1_000_000
-
-
-    # ==========================================================
-    # PETRÓLEO RECUPERABLE ESTIMADO
-    #
-    # RECUPERABLE = POES * FR
-    # ==========================================================
-
-    RECUPERABLE = POES * FR
+    POES_MMSTB = (
+        POES
+        / 1_000_000
+    )
 
 
     # ==========================================================
-    # PETRÓLEO RECUPERABLE EN MILLONES DE BARRILES
+    # PETRÓLEO RECUPERABLE
     # ==========================================================
 
-    RECUPERABLE_MMSTB = RECUPERABLE / 1_000_000
+    RECUPERABLE = (
+        POES
+        * FR
+    )
 
 
     # ==========================================================
-    # RESULTADOS
+    # PETRÓLEO RECUPERABLE EN MMSTB
     # ==========================================================
 
-    st.subheader("📊 Resultados")
+    RECUPERABLE_MMSTB = (
+        RECUPERABLE
+        / 1_000_000
+    )
+
+
+    # ==========================================================
+    # RESULTADOS PRINCIPALES
+    # ==========================================================
+
+    st.subheader(
+        "📊 Resultados"
+    )
+
 
     col1, col2, col3 = st.columns(3)
 
 
     with col1:
 
-        st.metric(
-            "Espesor neto hₙ",
-            f"{h_n:,.2f} ft"
+        tarjeta_resultado(
+            "Espesor Neto",
+            f"{h_n:,.2f}",
+            "ft",
+            "📏"
         )
 
 
     with col2:
 
-        st.metric(
+        tarjeta_resultado(
             "POES",
-            f"{POES_MMSTB:,.2f} MMSTB"
+            f"{POES_MMSTB:,.2f}",
+            "MMSTB",
+            "🛢️"
         )
 
 
     with col3:
 
-        st.metric(
-            "Petróleo recuperable",
-            f"{RECUPERABLE_MMSTB:,.2f} MMSTB"
+        tarjeta_resultado(
+            "Volumen Recuperable",
+            f"{RECUPERABLE_MMSTB:,.2f}",
+            "MMSTB",
+            "📊"
         )
 
 
-    col4, col5 = st.columns(2)
+    # ==========================================================
+    # RESULTADOS COMPLEMENTARIOS
+    # ==========================================================
+
+    col4, col5, col6 = st.columns(3)
 
 
     with col4:
 
-        st.metric(
-            "POES [STB]",
-            f"{POES:,.0f} STB"
+        tarjeta_resultado(
+            "POES",
+            f"{POES:,.0f}",
+            "STB",
+            "🛢️"
         )
 
 
     with col5:
 
-        st.metric(
-            "Recuperable [STB]",
-            f"{RECUPERABLE:,.0f} STB"
+        tarjeta_resultado(
+            "Petróleo Recuperable",
+            f"{RECUPERABLE:,.0f}",
+            "STB",
+            "📈"
+        )
+
+
+    with col6:
+
+        tarjeta_resultado(
+            "Saturación de Petróleo",
+            f"{So * 100:.1f}",
+            "%",
+            "💧"
         )
 
 
     # ==========================================================
-    # INDICADOR VISUAL
+    # INTERPRETACIÓN
     # ==========================================================
 
     st.success(
-        f"🟢 Con un factor de recobro de {FR * 100:.1f} %, "
-        f"el volumen recuperable estimado representa "
-        f"{FR * 100:.1f} % del POES calculado."
+        f"🟢 Con un factor de recobro de "
+        f"{FR * 100:.1f} %, el volumen "
+        f"potencialmente recuperable es de "
+        f"{RECUPERABLE_MMSTB:,.2f} MMSTB."
     )
 
 
     # ==========================================================
-    # DATAFRAME CON PANDAS
+    # DATAFRAME
     # ==========================================================
 
     dataFrame = pd.DataFrame({
 
         "Volumen": [
+
             "POES",
+
             "Petróleo Recuperable"
+
         ],
 
         "STB": [
+
             POES,
+
             RECUPERABLE
+
         ],
 
         "MMSTB": [
+
             POES_MMSTB,
+
             RECUPERABLE_MMSTB
+
         ]
 
     })
 
 
     # ==========================================================
-    # GRÁFICO INTERACTIVO PLOTLY
+    # GRÁFICO POES VS RECUPERABLE
     # ==========================================================
 
     fig = go.Figure()
 
 
-    # ----------------------------------------------------------
-    # COMPARACIÓN POES VS VOLUMEN RECUPERABLE
-    # ----------------------------------------------------------
-
     fig.add_trace(
         go.Bar(
 
             x=[
+
                 "POES",
+
                 "Petróleo Recuperable"
+
             ],
 
             y=[
+
                 POES_MMSTB,
+
                 RECUPERABLE_MMSTB
+
             ],
 
             name="Volumen",
 
             text=[
+
                 f"{POES_MMSTB:,.2f} MMSTB",
+
                 f"{RECUPERABLE_MMSTB:,.2f} MMSTB"
+
             ],
 
-            textposition="auto"
+            textposition="auto",
+
+            marker=dict(
+
+                color=[
+                    "#00A6FB",
+                    "#00CC96"
+                ]
+
+            )
 
         )
     )
@@ -317,11 +432,16 @@ def show():
 
     fig.update_layout(
 
-        title="POES vs Petróleo Recuperable",
+        title=(
+            "Comparación del POES "
+            "y Petróleo Recuperable"
+        ),
 
         xaxis_title="Volumen",
 
-        yaxis_title="Volumen [MMSTB]",
+        yaxis_title=(
+            "Volumen [MMSTB]"
+        ),
 
         template="plotly_dark",
 
@@ -332,10 +452,6 @@ def show():
     )
 
 
-    # ==========================================================
-    # MOSTRAR GRÁFICA
-    # ==========================================================
-
     st.plotly_chart(
         fig,
         use_container_width=True
@@ -343,7 +459,7 @@ def show():
 
 
     # ==========================================================
-    # MOSTRAR TABLA DE DATOS
+    # TABLA
     # ==========================================================
 
     with st.expander(
@@ -357,7 +473,7 @@ def show():
 
 
     # ==========================================================
-    # INFORMACIÓN DEL CÁLCULO
+    # ECUACIONES
     # ==========================================================
 
     with st.expander(
@@ -365,7 +481,7 @@ def show():
     ):
 
         st.write(
-            "### Espesor neto hₙ"
+            "### Espesor Neto"
         )
 
         st.latex(
@@ -374,14 +490,26 @@ def show():
 
 
         st.write(
-            "### Petróleo Original en Sitio (POES)"
+            "### Saturación de Petróleo"
+        )
+
+        st.latex(
+            r"S_o = 1-S_{wi}"
+        )
+
+
+        st.write(
+            "### Petróleo Original en Sitio"
         )
 
         st.latex(
             r"""
             POES =
             \frac{
-            7758 \times A \times h_n \times \phi
+            7758
+            \times A
+            \times h_n
+            \times \phi
             \times (1-S_{wi})
             }{
             B_{oi}
@@ -391,12 +519,13 @@ def show():
 
 
         st.write(
-            "### Petróleo recuperable estimado"
+            "### Petróleo Recuperable"
         )
 
         st.latex(
             r"""
-            Petróleo\ Recuperable =
+            Petróleo\ Recuperable
+            =
             POES \times FR
             """
         )
@@ -408,14 +537,16 @@ def show():
 
         st.latex(
             r"""
-            MMSTB =
+            MMSTB
+            =
             \frac{STB}{1{,}000{,}000}
             """
         )
 
 
 # ==============================================================
-# EJECUTAR PÁGINA
+# EJECUCIÓN INDIVIDUAL PARA PRUEBAS
 # ==============================================================
 
-show()
+if __name__ == "__main__":
+    show()
