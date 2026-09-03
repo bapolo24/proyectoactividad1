@@ -3,47 +3,86 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 
+from componentes import tarjeta_resultado
+from estilos import cargar_estilos
+
 
 def show():
 
-    st.header("🏗️ Perforación")
+    # ==========================================================
+    # CARGAR ESTILOS
+    # ==========================================================
 
-    st.write(
-        "Calculadora de presión hidrostática durante la perforación."
+    cargar_estilos()
+
+
+    # ==========================================================
+    # ENCABEZADO
+    # ==========================================================
+
+    st.header(
+        "🏗️ Perforación – Presión Hidrostática"
     )
 
+    st.write(
+        "Calculadora de presión hidrostática "
+        "durante la perforación."
+    )
+
+
+    st.info(
+        "ℹ️ La presión hidrostática depende de la "
+        "altura vertical de la columna de fluido. "
+        "Por esta razón el cálculo utiliza TVD y no MD."
+    )
+
+
     # ==========================================================
-    # PARÁMETROS DE LA PERFORACIÓN
+    # PARÁMETROS DE PERFORACIÓN
     # ==========================================================
 
-    with st.sidebar.expander(
+    with st.expander(
         "🛠️ Parámetros de Perforación",
         expanded=True
     ):
 
-        MW = st.number_input(
-            "Peso de lodo (MW) [ppg]",
-            value=20.0,
-            step=1.0
-        )
+        col1, col2 = st.columns(2)
 
-        MD = st.number_input(
-            "Profundidad medida del pozo (MD) [ft]",
-            value=20000.0,
-            step=100.0
-        )
 
-        TVD = st.number_input(
-            "Profundidad vertical verdadera (TVD) [ft]",
-            value=500.0,
-            step=10.0
-        )
+        with col1:
 
-        p_formacion = st.number_input(
-            "Presión de Formación (Pform) [psi]",
-            value=6000.0,
-            step=100.0
-        )
+            MW = st.number_input(
+                "Peso de Lodo (MW) [ppg]",
+                value=10.0,
+                step=0.1,
+                key="perf_MW"
+            )
+
+
+            MD = st.number_input(
+                "Profundidad Medida (MD) [ft]",
+                value=10000.0,
+                step=100.0,
+                key="perf_MD"
+            )
+
+
+        with col2:
+
+            TVD = st.number_input(
+                "Profundidad Vertical Verdadera (TVD) [ft]",
+                value=9000.0,
+                step=100.0,
+                key="perf_TVD"
+            )
+
+
+            p_formacion = st.number_input(
+                "Presión de Formación (Pform) [psi]",
+                value=4500.0,
+                step=100.0,
+                key="perf_p_formacion"
+            )
 
 
     # ==========================================================
@@ -53,7 +92,8 @@ def show():
     if MW <= 0:
 
         st.error(
-            "⚠️ El peso de lodo MW debe ser mayor que cero."
+            "⚠️ El peso de lodo MW debe ser "
+            "mayor que cero."
         )
 
         return
@@ -62,7 +102,8 @@ def show():
     if MD <= 0:
 
         st.error(
-            "⚠️ La profundidad MD debe ser mayor que cero."
+            "⚠️ La profundidad MD debe ser "
+            "mayor que cero."
         )
 
         return
@@ -71,7 +112,8 @@ def show():
     if TVD <= 0:
 
         st.error(
-            "⚠️ La profundidad TVD debe ser mayor que cero."
+            "⚠️ La profundidad TVD debe ser "
+            "mayor que cero."
         )
 
         return
@@ -80,8 +122,8 @@ def show():
     if TVD > MD:
 
         st.error(
-            "⚠️ La profundidad vertical verdadera TVD "
-            "no puede ser mayor que la profundidad medida MD."
+            "⚠️ TVD no puede ser mayor que MD. "
+            "Debe cumplirse TVD ≤ MD."
         )
 
         return
@@ -90,7 +132,8 @@ def show():
     if p_formacion < 0:
 
         st.error(
-            "⚠️ La presión de formación no puede ser negativa."
+            "⚠️ La presión de formación "
+            "no puede ser negativa."
         )
 
         return
@@ -111,7 +154,11 @@ def show():
     # PH = 0.052 * MW * TVD
     # ==========================================================
 
-    PH = 0.052 * MW * TVD
+    PH = (
+        0.052
+        * MW
+        * TVD
+    )
 
 
     # ==========================================================
@@ -120,71 +167,95 @@ def show():
     # ΔP = PH - Pform
     # ==========================================================
 
-    DIF_P = PH - p_formacion
+    DIF_P = (
+        PH
+        - p_formacion
+    )
 
 
     # ==========================================================
     # RESULTADOS
     # ==========================================================
 
-    st.subheader("📊 Resultados")
+    st.subheader(
+        "📊 Resultados"
+    )
+
 
     col1, col2, col3 = st.columns(3)
 
 
     with col1:
 
-        st.metric(
-            "Gradiente hidrostático",
-            f"{GRAD_H:.3f} psi/ft"
+        tarjeta_resultado(
+            "Gradiente Hidrostático",
+            f"{GRAD_H:.3f}",
+            "psi/ft",
+            "📐"
         )
 
 
     with col2:
 
-        st.metric(
-            "Presión hidrostática",
-            f"{PH:,.2f} psi"
+        tarjeta_resultado(
+            "Presión Hidrostática",
+            f"{PH:,.2f}",
+            "psi",
+            "🏗️"
         )
 
 
     with col3:
 
-        st.metric(
-            "Diferencial de presión",
-            f"{DIF_P:,.2f} psi"
+        tarjeta_resultado(
+            "Diferencial de Presión",
+            f"{DIF_P:,.2f}",
+            "psi",
+            "⚖️"
         )
 
 
     # ==========================================================
     # CONDICIÓN DE BALANCE
     # ==========================================================
+    #
+    # Se adopta ±50 psi como criterio visual
+    # para considerar un balance aproximado.
+    # ==========================================================
 
-    tolerancia_balance = 0
+    tolerancia_balance = 50.0
 
 
     if DIF_P > tolerancia_balance:
 
         st.success(
-            "🟢 SOBREBALANCE: la presión hidrostática "
-            "es mayor que la presión de formación."
+            "🟢 SOBREBALANCE: PH > Pform. "
+            "La columna hidrostática ejerce una "
+            "presión superior a la formación."
         )
 
 
     elif DIF_P < -tolerancia_balance:
 
         st.error(
-            "🔴 BAJO BALANCE: la presión hidrostática "
-            "es menor que la presión de formación."
+            "🔴 BAJO BALANCE: PH < Pform. "
+            "La presión de formación supera "
+            "la presión hidrostática."
         )
 
 
     else:
 
         st.warning(
-            "🟡 BALANCE APROXIMADO: la presión hidrostática "
-            "es aproximadamente igual a la presión de formación."
+            "🟡 BALANCE APROXIMADO: "
+            "PH ≈ Pform."
         )
+
+
+    st.caption(
+        "Criterio visual utilizado para balance "
+        "aproximado: ±50 psi."
+    )
 
 
     # ==========================================================
@@ -198,31 +269,37 @@ def show():
     )
 
 
-    PH_vector = 0.052 * MW * TVDS
+    PH_vector = (
+        0.052
+        * MW
+        * TVDS
+    )
 
 
     # ==========================================================
-    # DATAFRAME CON PANDAS
+    # DATAFRAME
     # ==========================================================
 
     dataFrame = pd.DataFrame({
 
-        "TVD [ft]": TVDS,
+        "TVD [ft]":
+            TVDS,
 
-        "PH [psi]": PH_vector
+        "PH [psi]":
+            PH_vector
 
     })
 
 
     # ==========================================================
-    # GRÁFICO INTERACTIVO PLOTLY
+    # GRÁFICO
     # ==========================================================
 
     fig = go.Figure()
 
 
     # ----------------------------------------------------------
-    # PH VS TVD
+    # CURVA PH VS TVD
     # ----------------------------------------------------------
 
     fig.add_trace(
@@ -238,7 +315,7 @@ def show():
 
             line=dict(
                 color="#00FF90",
-                width=3.5
+                width=4
             )
 
         )
@@ -246,7 +323,7 @@ def show():
 
 
     # ----------------------------------------------------------
-    # PUNTO DE LA TVD INGRESADA
+    # PUNTO CORRESPONDIENTE A LA TVD INGRESADA
     # ----------------------------------------------------------
 
     fig.add_trace(
@@ -258,11 +335,11 @@ def show():
 
             mode="markers",
 
-            name="Punto ingresado",
+            name="Punto Calculado",
 
             marker=dict(
                 color="red",
-                size=12
+                size=13
             )
 
         )
@@ -279,7 +356,11 @@ def show():
 
         line_dash="dash",
 
-        annotation_text="Pform",
+        line_color="#FFD166",
+
+        annotation_text=(
+            f"Pform = {p_formacion:,.0f} psi"
+        ),
 
         annotation_position="top right"
 
@@ -292,11 +373,16 @@ def show():
 
     fig.update_layout(
 
-        title="Presión Hidrostática vs TVD",
+        title=(
+            "Presión Hidrostática vs "
+            "Profundidad Vertical Verdadera"
+        ),
 
         xaxis_title="TVD [ft]",
 
-        yaxis_title="Presión Hidrostática PH [psi]",
+        yaxis_title=(
+            "Presión Hidrostática PH [psi]"
+        ),
 
         template="plotly_dark",
 
@@ -307,10 +393,6 @@ def show():
     )
 
 
-    # ==========================================================
-    # MOSTRAR GRÁFICA
-    # ==========================================================
-
     st.plotly_chart(
         fig,
         use_container_width=True
@@ -318,7 +400,7 @@ def show():
 
 
     # ==========================================================
-    # MOSTRAR TABLA DE DATOS
+    # TABLA DE DATOS
     # ==========================================================
 
     with st.expander(
@@ -332,7 +414,7 @@ def show():
 
 
     # ==========================================================
-    # INFORMACIÓN DEL CÁLCULO
+    # ECUACIONES
     # ==========================================================
 
     with st.expander(
@@ -340,7 +422,7 @@ def show():
     ):
 
         st.write(
-            "### Gradiente hidrostático Gₕ"
+            "### Gradiente Hidrostático"
         )
 
         st.latex(
@@ -349,7 +431,7 @@ def show():
 
 
         st.write(
-            "### Presión hidrostática Pₕ"
+            "### Presión Hidrostática"
         )
 
         st.latex(
@@ -358,7 +440,7 @@ def show():
 
 
         st.write(
-            "### Diferencial de presión"
+            "### Diferencial de Presión"
         )
 
         st.latex(
@@ -366,8 +448,22 @@ def show():
         )
 
 
+        st.write(
+            "### Interpretación"
+        )
+
+        st.markdown(
+            """
+            - **ΔP > 0:** sobrebalance.
+            - **ΔP ≈ 0:** balance aproximado.
+            - **ΔP < 0:** bajo balance.
+            """
+        )
+
+
 # ==============================================================
-# EJECUTAR PÁGINA
+# EJECUCIÓN INDIVIDUAL PARA PRUEBAS
 # ==============================================================
 
-show()
+if __name__ == "__main__":
+    show()
